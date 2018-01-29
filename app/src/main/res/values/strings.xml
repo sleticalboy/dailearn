@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">测试</string>
     <!--股票-->
     <string name="hr_china">中国华融</string>
     <string name="lowest_rise">
@@ -24,4 +24,5 @@
         </Data>
     </string>
     <string name="yesterday_income">昨收 %1$3</string>
+    <string name="stock_code">02799.港元</string>
 </resources>

@@ -20,19 +20,20 @@ public class Stock implements Serializable {
         public String stockCode;
         public String stockName;
         public String exchange;
-        public int asset;
-        public String stockStatus;
-        public double close;
-        public double high;
-        public double low;
+        public double close; // 今收-涨跌指数
+        public double high; // 最高
+        public double low; // 最低
+        public double netChange; // 指数
+        public double netChangeRatio; // 百分比
+        public double preClose; // 昨收
+        public double open; // 今开
+
         public long capitalization;
-        public int netChange;
-        public int netChangeRatio;
+        public int asset;
         public int volume;
         public double amplitudeRatio;
+        public String stockStatus;
         public double turnoverRatio;
-        public double preClose;
-        public double open;
         public int followNum;
     }
 }

@@ -1,15 +1,22 @@
 package com.sleticalboy.myapplication;
 
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.hardware.display.VirtualDisplay;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.view.View;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import butterknife.ButterKnife;
 import okhttp3.Call;
@@ -46,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 final Stock vStock = new Gson().fromJson(vJson, Stock.class);
                 if (vStock.data != null && vStock.data.size() > 0) {
-                    runOnUiThread(new Runnable() {
+                    new Handler(getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             setStockView(vStock.data.get(0));
@@ -58,32 +65,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setStockView(Stock.DataEntity stock) {
-        TextView stockName = (TextView) findViewById(R.id.tv_stock_name);
-        stockName.setText(stock.stockName);
+        DecimalFormat decimalFormat = new DecimalFormat("0.000");
 
-        TextView stockCode = (TextView) findViewById(R.id.tv_stock_code);
-        stockCode.setText(stock.stockCode);
+        TextView tv_stock_close = (TextView) findViewById(R.id.tv_stock_close);
+        tv_stock_close.setText(String.format("%s↑", decimalFormat.format(stock.close)));
 
         TextView stockNetchange = (TextView) findViewById(R.id.tv_stock_netchange);
-        stockNetchange.setText(String.format("%s↑", stock.netChange));
+        stockNetchange.setText(String.format("+%s", decimalFormat.format(stock.netChange)));
 
         TextView stockNetchangeRatio = (TextView) findViewById(R.id.tv_stock_netchange_ratio);
-        stockNetchangeRatio.setText(String.format("+%s%%", stock.netChangeRatio));
+        stockNetchangeRatio.setText(String.format("+%s%%", decimalFormat.format(stock.netChangeRatio)));
 
+        // 昨收
         TextView stockPreclose = (TextView) findViewById(R.id.tv_stock_preclose);
-        CharSequence preClose = getText(R.string.yesterday_income);
-        stockPreclose.setText(String.format(preClose.toString(), stock.preClose));
+        stockPreclose.setText(String.format("昨收 %s", decimalFormat.format(stock.preClose)));
 
         TextView stockOpen = (TextView) findViewById(R.id.tv_stock_open);
-        CharSequence open = getText(R.string.today_open_quotation);
-        stockOpen.setText(Html.fromHtml(String.format(open.toString(), stock.open)));
+        SpannableString openString = new SpannableString(String.format("今开 %s", decimalFormat.format(stock.open)));
+        stockOpen.setText(setSpans(openString, "#FF4B4F"));
 
         TextView stockHigh = (TextView) findViewById(R.id.tv_stock_high);
-        CharSequence high = getText(R.string.highest_rise);
-        stockHigh.setText(Html.fromHtml(String.format(high.toString(), stock.high)));
+        SpannableString highString = new SpannableString(String.format("最高 %s", decimalFormat.format(stock.high)));
+        stockHigh.setText(setSpans(highString, "#FF4B4F"));
 
         TextView stockLow = (TextView) findViewById(R.id.tv_stock_low);
-        CharSequence low = getText(R.string.lowest_rise);
-        stockLow.setText(Html.fromHtml(String.format(low.toString(), stock.low)));
+        SpannableString lowString = new SpannableString(String.format("最低 %s", decimalFormat.format(stock.low)));
+        stockLow.setText(setSpans(lowString, "#17C296"));
     }
+
+    private SpannableString setSpans(SpannableString target, String color) {
+        ForegroundColorSpan startSpan = new ForegroundColorSpan(Color.BLACK);
+        ForegroundColorSpan endSpan = new ForegroundColorSpan(Color.parseColor(color));
+        target.setSpan(startSpan, 0, 2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        target.setSpan(endSpan, 2, target.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+        return target;
+    }
+
 }
