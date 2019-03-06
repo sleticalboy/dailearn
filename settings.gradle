@@ -1,10 +1,16 @@
 include ':MainApp'
+<<<<<<< HEAD
 include ':OkHttp2.5'
 include ':Glide4.x'
 include ':OkHttp3.x'
+=======
+include ':Http'
+include ':ObjectBox'
+//include ':OkHttp2.5'
+//include ':Glide4.x'
+//include ':OkHttp3.x'
+>>>>>>> e43c101 (移除一些组件)
 //include ':Glide3.7'
 //include ':ExtShare'
 //include ':Camera2'
 //include ':Camera'
-include ':MQTT'
-//include ':EventBus'
