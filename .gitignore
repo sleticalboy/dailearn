@@ -5,13 +5,6 @@ build/
 captures/
 .DS_Store
 .externalNativeBuild
-<<<<<<< HEAD
-/*.properties
-/sSLClientDemo/
-/import-summary.txt
-/FaceClient/
-=======
 *.properties
 MQTT/
 *.zip
->>>>>>> e43c101 (移除一些组件)
