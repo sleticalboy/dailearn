@@ -1,4 +1,5 @@
-include ':MainApp'
+<<<<<<< HEAD
+include ':MainApp', ':EmojiPanel'
 //include ':Glide3.7'
 //include ':Camera2'
 //include ':Camera'
