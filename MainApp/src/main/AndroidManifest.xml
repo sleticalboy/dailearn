@@ -28,12 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-<<<<<<< HEAD
-        <activity android:name=".ui.activity.StockActivity"/>
-        <activity android:name=".ui.activity.SmsSenderActivity"/>
-        <activity android:name=".ui.activity.RefreshActivity"/>
-=======
->>>>>>> e43c101 (移除一些组件)
         <activity android:name=".ui.activity.PullRefreshActivity"/>
         <activity android:name=".ui.activity.WheelRVActivity"/>
         <activity android:name=".ui.activity.DecorationActivity"/>

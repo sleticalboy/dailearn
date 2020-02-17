@@ -31,14 +31,10 @@ class StartActivity : ListActivity() {
             ItemHolder(PagerActivity::class.java, "RecyclerView 分页"),
             ItemHolder(DecorationActivity::class.java, "RecyclerView 添加 item 分割线 / 拖拽排序"),
             ItemHolder(WheelRVActivity::class.java, "RecyclerView 轮播"),
-<<<<<<< HEAD
             ItemHolder(PullRefreshActivity::class.java, "下拉刷新库测试"),
             ItemHolder(RefreshActivity::class.java, "下拉刷新 View"),
-            ItemHolder(SmsSenderActivity::class.java, "加密短信发送"),
-            ItemHolder(StockActivity::class.java, "股票 View")
-=======
             ItemHolder(PullRefreshActivity::class.java, "下拉刷新库测试")
->>>>>>> e43c101 (移除一些组件)
+            ItemHolder(WheelRVActivity::class.java, "RecyclerView 轮播")
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
