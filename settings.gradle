@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 include ':MainApp'
 include ':EmojiPanel'
 //include ':OkHttp2.5'
