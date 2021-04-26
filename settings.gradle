@@ -1,17 +1,12 @@
-<<<<<<< HEAD
-include ':MainApp'
-// include ':sample-arch'
-// include ':EmojiPanel'
-// include ':ObjectBox'
-=======
 rootProject.name = 'DailyWork'
 // include ':sample-arch'
 // include ':MainApp'
 include ':EmojiPanel'
-// include ':Http'
->>>>>>> a789d06 ([fragment] Fragment A is invisible, Fragment B is visible; press home button, what will these two fragmnets' lifecycle be changed?)
 // include ':OkHttp2.5'
 // include ':Glide4.x'
 // include ':Glide3.7'
+// include ':sample-arch'
+// include ':MainApp'
+// include ':EmojiPanel'
 // include ':Camera2'
-// include ':Camera'
+include ':Camera'
