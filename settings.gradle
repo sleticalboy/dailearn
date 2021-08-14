@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 rootProject.name = 'DailyWork'
 include ':EmojiPanel'
 // include ':OkHttp2.5'
@@ -7,3 +8,12 @@ include ':EmojiPanel'
 // include ':MainApp'
 // include ':EmojiPanel'
 include ':Camera'
+=======
+rootProject.name = 'Daily'
+//include ':sample-arch'
+include ':MainApp'
+//include ':EmojiPanel'
+//include ':Http'
+//include ':Camera2'
+//include ':Camera'
+>>>>>>> 5f2af60 ([refactor]Migrate to dataBinding & viewBinding)
