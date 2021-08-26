@@ -35,20 +35,6 @@ android {
     }
 }
 
-// dependencies {
-//     implementation fileTree(include: ['*.jar'], dir: 'libs')
-//     implementation files('libs/BASE64Encoder.jar')
-//     implementation files('libs/bcprov-jdk16-1.46.jar')
-//     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha01'
-//     implementation 'com.google.android.material:material:1.1.0-alpha02'
-//     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-//     // green dao dependency
-//     implementation 'org.greenrobot:greendao:3.2.2'
-//     // implementation 'com.alibaba:fastjson:1.1.23'
-//     implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
-//     implementation 'com.google.android.material:material:1.1.0-alpha03'
-// }
-
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
@@ -66,6 +52,7 @@ dependencies {
     implementation("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$rxjava_adapter_version")
     implementation("androidx.exifinterface:exifinterface:$exif_interface")
     implementation("com.airbnb.android:lottie:$lottie_version")
+    compileOnly("com.google.code.gson:gson:$gson")
 
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
