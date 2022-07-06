@@ -1,4 +1,7 @@
+include ':sample-arch'
 include ':MainApp'
-//include ':sample-arch'
-//include ':Camera2'
+include ':EmojiPanel'
+include ':Camera2'
 include ':Camera'
+// ndk build 项目，直接挂在 Android 源码目录中进行编译的
+//include ':jni-demo'
