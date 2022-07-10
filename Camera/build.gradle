@@ -8,12 +8,6 @@ android {
     compileSdkVersion rootProject.ext.compile_version
     buildToolsVersion rootProject.ext.build_version
 
-    defaultConfig {
-        applicationId "com.example.camera"
-        minSdkVersion 21
-        targetSdkVersion 32
-    }
-
     buildTypes {
         release {
             minifyEnabled false
