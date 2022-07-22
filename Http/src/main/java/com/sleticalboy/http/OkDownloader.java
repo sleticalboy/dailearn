@@ -1,6 +1,8 @@
 package com.sleticalboy.http;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+<<<<<<< HEAD:Http/src/main/java/com/sleticalboy/http/OkDownloader.java
 
 import com.sleticalboy.http.builder.GetBuilder;
 import com.sleticalboy.http.builder.RequestBuilder;
@@ -8,6 +10,13 @@ import com.sleticalboy.http.callback.DownloadCallback;
 import com.sleticalboy.http.callback.ProgressCallback;
 import com.sleticalboy.http.interceptor.ProgressInterceptor;
 
+=======
+import com.binlee.http.builder.GetBuilder;
+import com.binlee.http.builder.RequestBuilder;
+import com.binlee.http.callback.DownloadCallback;
+import com.binlee.http.callback.ProgressCallback;
+import com.binlee.http.interceptor.ProgressInterceptor;
+>>>>>>> d3b061e1 (style: improve code style):Http/src/main/java/com/binlee/http/OkDownloader.java
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,134 +76,23 @@ public final class OkDownloader {
             });
         }
     }
-    
-    /**
-     * 开始下载, after {@link OkDownloader#setDownloadCallback(DownloadCallback)}
-     */
-    public void start() {
-        if (mIsPause) {
-            resume();
-            return;
-        }
-        mIsCancel = false;
-        mIsPause = false;
-        download(0L);
-    }
-    
-    /**
-     * 开始下载
-     *
-     * @param startPoint 位置
-     */
-    private void download(final long startPoint) {
-        RequestBuilder getBuilder = new GetBuilder()
-                .url(mUrl)
-                .breakPoint(startPoint, null);
-        HttpClient.get().getOkHttpClient().newCall(getBuilder.build()).enqueue(new Callback() {
-            @Override
-            public void onFailure(final Call call, final IOException e) {
-                if (mCallback != null) {
-                    HttpClient.get().getMainHandler().post(() -> mCallback.onError(e));
-                }
-            }
-            
-            @Override
-            public void onResponse(final Call call, final Response response) throws IOException {
-                final ResponseBody responseBody = response.body();
-                if (response.isSuccessful() && responseBody != null) {
-                    saveFile(responseBody, startPoint);
-                }
-            }
-        });
-    }
-    
-    // okio 实现
-    // @WorkerThread
-    // private void saveFile(ResponseBody responseBody, long startPoint) {
-    //     BufferedSink sink = null;
-    //     Buffer buffer = null;
-    //     BufferedSource source = null;
-    //     try {
-    //         sink = Okio.buffer(Okio.sink(mSaveFile));
-    //         buffer = sink.buffer();
-    //         long total = 0;
-    //         long len;
-    //         long bufferSize = 1 << 18; // 缓冲区: 256 kb
-    //         source = responseBody.source();
-    //         while ((len = source.read(buffer, bufferSize)) != -1) {
-    //             if (mIsCancel) {
-    //                 notifyStateChange(STATE_CANCEL);
-    //                 return;
-    //             } else if (mIsPause) {
-    //                 notifyStateChange(STATE_PAUSE);
-    //                 return;
-    //             } else {
-    //                 sink.emit();
-    //                 breakPoint = (total += len);
-    //             }
-    //         }
-    //         if (mCallback != null) {
-    //             ProgressInterceptor.removeCallback(mUrl);
-    //             resetDownloader();
-    //             mHttpClient.getMainHandler().post(() -> mCallback.onComplete());
-    //         }
-    //     } catch (IOException e) {
-    //         if (mCallback != null) {
-    //             mHttpClient.getMainHandler().post(() -> mCallback.onError(e));
-    //         }
-    //     } finally {
-    //         OkUtils.closeSilently(source);
-    //         OkUtils.closeSilently(sink);
-    //         OkUtils.closeSilently(buffer);
-    //         OkUtils.closeSilently(responseBody);
-    //     }
-    // }
-    
-    // java.io 库实现
-    @WorkerThread
-    private void saveFile(ResponseBody body, long startPoint) {
-        InputStream inputStream = null;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            inputStream = body.byteStream();
-            randomAccessFile = new RandomAccessFile(mSaveFile, "rw");
-            randomAccessFile.seek(startPoint);
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) != -1) {
-                if (mIsCancel) {
-                    notifyStateChange(STATE_CANCEL);
-                    return;
-                } else if (mIsPause) {
-                    notifyStateChange(STATE_PAUSE);
-                    return;
-                } else {
-                    breakPoint = (startPoint += len);
-                    randomAccessFile.write(buffer, 0, len);
-                }
-            }
-            if (mCallback != null) {
-                ProgressInterceptor.removeCallback(mUrl);
-                resetDownloader();
-                HttpClient.get().getMainHandler().post(() -> mCallback.onComplete(mSaveFile));
-            }
-        } catch (IOException ignored) {
-            if (mCallback != null) {
-                HttpClient.get().getMainHandler().post(() -> mCallback.onError(ignored));
-            }
-        } finally {
-            OkUtils.closeSilently(inputStream);
-            OkUtils.closeSilently(randomAccessFile);
-        }
-    }
-    
-    private void resetDownloader() {
-        mIsCancel = false;
-        mIsDownloading = false;
-        mIsPause = false;
-    }
-    
-    private void notifyStateChange(int state) {
+    mIsCancel = false;
+    mIsPause = false;
+    download(0L);
+  }
+
+  /**
+   * 开始下载
+   *
+   * @param startPoint 位置
+   */
+  private void download(final long startPoint) {
+    RequestBuilder getBuilder = new GetBuilder()
+      .url(mUrl)
+      .breakPoint(startPoint, null);
+    HttpClient.get().getOkHttpClient().newCall(getBuilder.build()).enqueue(new Callback() {
+      @Override
+      public void onFailure(@NonNull final Call call, @NonNull final IOException e) {
         if (mCallback != null) {
             if (state == STATE_CANCEL) {
                 HttpClient.get().getMainHandler().post(() -> mCallback.onCancel());
@@ -204,14 +102,13 @@ public final class OkDownloader {
                 HttpClient.get().getMainHandler().post(() -> mCallback.onResume());
             }
         }
-    }
-    
-    /**
-     * 暂停下载
-     */
-    public void pause() {
-        if (mIsPause) {
-            return;
+      }
+
+      @Override
+      public void onResponse(@NonNull final Call call, @NonNull final Response response) {
+        final ResponseBody responseBody = response.body();
+        if (response.isSuccessful() && responseBody != null) {
+          saveFile(responseBody, startPoint);
         }
         mIsPause = true;
         mIsCancel = false;
@@ -248,8 +145,18 @@ public final class OkDownloader {
         if (mIsCancel) {
             return;
         }
-        mIsCancel = true;
-        mIsDownloading = false;
-        mIsPause = false;
+      }
+      if (mCallback != null) {
+        ProgressInterceptor.removeCallback(mUrl);
+        resetDownloader();
+        HttpClient.get().getMainHandler().post(() -> mCallback.onComplete(mSaveFile));
+      }
+    } catch (IOException e) {
+      if (mCallback != null) {
+        HttpClient.get().getMainHandler().post(() -> mCallback.onError(e));
+      }
+    } finally {
+      OkUtils.closeSilently(inputStream);
+      OkUtils.closeSilently(randomAccessFile);
     }
 }
