@@ -168,7 +168,7 @@ class IndexActivity : BaseActivity() {
     mBind = null
   }
 
-  class DataAdapter(private val dataSet: ArrayList<ModuleItem>) :
+  private class DataAdapter(private val dataSet: ArrayList<ModuleItem>) :
     RecyclerView.Adapter<ItemHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
@@ -191,7 +191,7 @@ class IndexActivity : BaseActivity() {
     }
   }
 
-  class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  private class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val textView = itemView as TextView
 
