@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
 <manifest
 <<<<<<< HEAD
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -6,6 +7,9 @@
     android:versionName="1.0">
 =======
   xmlns:android="http://schemas.android.com/apk/res/android"
+=======
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+>>>>>>> 1f1b561 (fix: construct PathClassLoader with plugin path directly)
   package="com.example.camera"
   android:versionCode="1"
   android:versionName="1.0">

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <<<<<<< HEAD
+<<<<<<< HEAD
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 =======
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
+=======
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+>>>>>>> 1f1b561 (fix: construct PathClassLoader with plugin path directly)
   package="com.crazyview.crazycamera2">
 >>>>>>> 3634788 (fix: fix build error package 'xxx' not found)
 
@@ -12,6 +16,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+<<<<<<< HEAD
     <application
         android:allowBackup="true"
         android:icon="@mipmap/cmo_logo"
@@ -22,6 +27,20 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+=======
+  <application
+    android:allowBackup="true"
+    android:icon="@mipmap/cmo_logo"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/cmo_logo"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme">
+    <activity
+      android:name=".MainActivity"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+>>>>>>> 1f1b561 (fix: construct PathClassLoader with plugin path directly)
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
