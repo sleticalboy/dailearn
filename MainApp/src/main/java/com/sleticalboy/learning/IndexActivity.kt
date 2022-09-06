@@ -57,7 +57,7 @@ class IndexActivity : BaseActivity() {
   }
 
   private fun loadJvmti() {
-    JvmtiLoader.attachAgent(this)
+    // JvmtiLoader.attachAgent(this)
   }
 
   override fun layout(): View {
