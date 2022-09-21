@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.AssetManager
+import android.content.res.Resources
 import android.os.Build
 import android.util.Log
 import com.binlee.dl.host.DlManager
@@ -29,7 +31,7 @@ class MainApp : Application() {
 
   override fun attachBaseContext(base: Context?) {
     super.attachBaseContext(base)
-    DlManager.initialize(classLoader, resources)
+    DlManager.init(this, super.getClassLoader(), super.getResources())
   }
 
   override fun onCreate() {
@@ -38,7 +40,19 @@ class MainApp : Application() {
     adaptAndroidO()
   }
 
+<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/MainApp.kt
   private fun adaptAndroidO() {
+=======
+  override fun getResources(): Resources {
+    return DlManager.resources()
+  }
+
+  override fun getAssets(): AssetManager {
+    return DlManager.resources().assets
+  }
+
+  private fun registerNotificationChannels() {
+>>>>>>> 661d1ff1 (feat: hook ActivityThread#mInstrumentation to start a plugin activity):MainApp/src/main/java/com/binlee/learning/MainApp.kt
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
     Log.d("MainApp", "adapt android O")
     registerReceivers()
