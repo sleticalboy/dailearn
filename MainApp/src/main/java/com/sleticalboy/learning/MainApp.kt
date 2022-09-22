@@ -4,11 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.AssetManager
-import android.content.res.Resources
 import android.os.Build
 import android.util.Log
-import com.binlee.dl.host.DlManager
+import com.binlee.dl.DlManager
 import com.binlee.learning.components.receiver.GlobalReceiver
 import com.binlee.learning.util.NotificationHelper
 
@@ -31,7 +29,7 @@ class MainApp : Application() {
 
   override fun attachBaseContext(base: Context?) {
     super.attachBaseContext(base)
-    DlManager.init(this, super.getClassLoader(), super.getResources())
+    DlManager.get().init(this)
   }
 
   override fun onCreate() {
@@ -40,6 +38,7 @@ class MainApp : Application() {
     adaptAndroidO()
   }
 
+<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/MainApp.kt
 <<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/MainApp.kt
   private fun adaptAndroidO() {
 =======
@@ -51,6 +50,8 @@ class MainApp : Application() {
     return DlManager.resources().assets
   }
 
+=======
+>>>>>>> 90f26f9c (reat: virtual runtime via didi's VirtualApk):MainApp/src/main/java/com/binlee/learning/MainApp.kt
   private fun registerNotificationChannels() {
 >>>>>>> 661d1ff1 (feat: hook ActivityThread#mInstrumentation to start a plugin activity):MainApp/src/main/java/com/binlee/learning/MainApp.kt
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return

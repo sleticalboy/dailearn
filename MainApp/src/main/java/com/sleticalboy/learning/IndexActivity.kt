@@ -14,7 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.binlee.dl.host.DlManager
+import com.binlee.dl.DlManager
 import com.binlee.dl.host.proxy.ProxyActivity
 import com.binlee.dl.host.util.FileUtils
 import com.binlee.learning.base.BaseActivity
@@ -35,12 +35,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/IndexActivity.kt
 import java.io.FileOutputStream
 <<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/IndexActivity.kt
 import java.lang.NullPointerException
 import java.lang.RuntimeException
 =======
 >>>>>>> b9c4ea6a (feat: mark resources conflicts):MainApp/src/main/java/com/binlee/learning/IndexActivity.kt
+=======
+>>>>>>> 90f26f9c (reat: virtual runtime via didi's VirtualApk):MainApp/src/main/java/com/binlee/learning/IndexActivity.kt
 import kotlin.concurrent.thread
 
 class IndexActivity : BaseActivity() {
@@ -226,7 +229,7 @@ class IndexActivity : BaseActivity() {
   private fun loadPluginClass() {
     val plugin = File(filesDir, "plugins/plugin.zip")
     FileUtils.copy(assets.open("plugin.apk"), plugin)
-    DlManager.install(plugin.absolutePath)
+    DlManager.get().install(plugin.absolutePath)
     // 插件中的类：com.example.plugin.PluginActivity
     ProxyActivity.start(this, ComponentName("com.example.plugin", "com.example.plugin.PluginActivity"))
     Log.w(TAG, "loadPluginClass() finished")
