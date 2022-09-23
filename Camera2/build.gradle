@@ -11,6 +11,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+<<<<<<< HEAD
     buildTypes {
         release {
             minifyEnabled false
@@ -18,6 +19,13 @@ android {
         }
     }
     // namespace 'com.crazyview.crazycamera2'
+=======
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+>>>>>>> 3add9b2 (refactor: rm DlLoaders & DlResources)
 }
 
 dependencies {
