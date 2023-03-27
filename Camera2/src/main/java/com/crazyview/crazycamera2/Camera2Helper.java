@@ -356,6 +356,7 @@ public class Camera2Helper {
         }
     }
 
+<<<<<<< HEAD
     /**
      * Lock the focus as the first step for a still image capture.
      */
@@ -590,6 +591,271 @@ public class Camera2Helper {
                 return;
             }
         } catch (CameraAccessException e) {
+=======
+  private void setUpCameraOutputs(int width, int height) {
+    try {
+      String[] cameraIdList = manager.getCameraIdList();
+      for (String cameraId : cameraIdList) {
+        CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+        /*Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        //前置摄像头
+        if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+            continue;
+        }else if(facing != null && facing == CameraCharacteristics.LENS_FACING_BACK){
+            continue;
+        }*/
+        StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+        if (map == null) {
+          continue;
+        }
+
+        // For still image captures, we use the largest available size.
+        Size largest = Collections.max(
+          Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
+          new Camera2Helper.CompareSizesByArea()
+        );
+        //初始化ImageReader
+        mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/2);
+        //设置ImageReader监听
+        mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
+
+        //处理图片方向相关
+        int rotation = ((Activity) textureView.getContext()).getWindowManager().getDefaultDisplay().getRotation();
+        mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+        boolean swappedDimensions = false;
+        switch (rotation) {
+          case Surface.ROTATION_0:
+          case Surface.ROTATION_180:
+            if (mSensorOrientation == 90 || mSensorOrientation == 270) {
+              swappedDimensions = true;
+            }
+            break;
+          case Surface.ROTATION_90:
+          case Surface.ROTATION_270:
+            if (mSensorOrientation == 0 || mSensorOrientation == 180) {
+              swappedDimensions = true;
+            }
+            break;
+          default:
+            break;
+        }
+        Point displaySize = new Point();
+        ((Activity) textureView.getContext()).getWindowManager().getDefaultDisplay().getSize(displaySize);
+        int rotatedPreviewWidth = width;
+        int rotatedPreviewHeight = height;
+        int maxPreviewWidth = displaySize.x;
+        int maxPreviewHeight = displaySize.y;
+        if (swappedDimensions) {
+          rotatedPreviewWidth = height;
+          rotatedPreviewHeight = width;
+          maxPreviewWidth = displaySize.y;
+          maxPreviewHeight = displaySize.x;
+        }
+
+        if (maxPreviewWidth > MAX_PREVIEW_WIDTH) {
+          maxPreviewWidth = MAX_PREVIEW_WIDTH;
+        }
+
+        if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
+          maxPreviewHeight = MAX_PREVIEW_HEIGHT;
+        }
+
+        // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
+        // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
+        // garbage capture data.
+        mPreviewSize = chooseOptimalSize(
+          map.getOutputSizes(SurfaceTexture.class), rotatedPreviewWidth,
+          rotatedPreviewHeight, maxPreviewWidth, maxPreviewHeight, largest
+        );
+
+        // We fit the aspect ratio of TextureView to the size of preview we picked.
+        int orientation = textureView.getContext().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+          textureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+        } else {
+          textureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
+        }
+        // 设置是否支持闪光灯
+        Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+        mFlashSupported = available == null ? false : available;
+        mCameraId = cameraId;
+        return;
+      }
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    } catch (NullPointerException e) {
+    }
+  }
+
+  /**
+   * 为了避免太大的预览大小会超过相机总线的带宽限
+   */
+  private Size chooseOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight,
+    int maxWidth, int maxHeight, Size aspectRatio) {
+
+    // Collect the supported resolutions that are at least as big as the preview Surface
+    List<Size> bigEnough = new ArrayList<>();
+    // Collect the supported resolutions that are smaller than the preview Surface
+    List<Size> notBigEnough = new ArrayList<>();
+    int w = aspectRatio.getWidth();
+    int h = aspectRatio.getHeight();
+    for (Size option : choices) {
+      if (option.getWidth() <= maxWidth
+        && option.getHeight() <= maxHeight
+        && option.getHeight() == option.getWidth() * h / w) {
+        if (option.getWidth() >= textureViewWidth && option.getHeight() >= textureViewHeight) {
+          bigEnough.add(option);
+        } else {
+          notBigEnough.add(option);
+        }
+      }
+    }
+    if (bigEnough.size() > 0) {
+      return Collections.min(bigEnough, new Camera2Helper.CompareSizesByArea());
+    } else if (notBigEnough.size() > 0) {
+      return Collections.max(notBigEnough, new Camera2Helper.CompareSizesByArea());
+    } else {
+      return choices[0];
+    }
+  }
+
+  /**
+   * 打开指定摄像头
+   */
+  private void openCamera(int width, int height) {
+    //4、设置参数
+    setUpCameraOutputs(width, height);
+    configureTransform(width, height);
+    try {
+      if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+        throw new RuntimeException("Time out waiting to lock camera opening.");
+      }
+      if (ActivityCompat.checkSelfPermission(textureView.getContext(), Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+        return;
+      }
+      manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
+    } catch (CameraAccessException e) {
+      e.printStackTrace();
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
+    }
+  }
+
+  /**
+   * Closes the current {@link CameraDevice}.
+   */
+  private void closeCamera() {
+    try {
+      mCameraOpenCloseLock.acquire();
+      if (null != mCaptureSession) {
+        mCaptureSession.close();
+        mCaptureSession = null;
+      }
+      if (null != mCameraDevice) {
+        mCameraDevice.close();
+        mCameraDevice = null;
+      }
+      if (null != mImageReader) {
+        mImageReader.close();
+        mImageReader = null;
+      }
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Interrupted while trying to lock camera closing.", e);
+    } finally {
+      mCameraOpenCloseLock.release();
+    }
+  }
+
+  /**
+   * Configures the necessary {@link android.graphics.Matrix} transformation to `textureView`.
+   * This method should be called after the camera preview size is determined in
+   * setUpCameraOutputs and also the size of `textureView` is fixed.
+   *
+   * @param viewWidth The width of `textureView`
+   * @param viewHeight The height of `textureView`
+   */
+  private void configureTransform(int viewWidth, int viewHeight) {
+    if (null == textureView || null == mPreviewSize) {
+      return;
+    }
+
+    int rotation = ((Activity) textureView.getContext()).getWindowManager().getDefaultDisplay().getRotation();
+    Matrix matrix = new Matrix();
+    RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
+    RectF bufferRect = new RectF(0, 0, mPreviewSize.getHeight(), mPreviewSize.getWidth());
+    float centerX = viewRect.centerX();
+    float centerY = viewRect.centerY();
+    if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
+      bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+      matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+      float scale = Math.max(
+        (float) viewHeight / mPreviewSize.getHeight(),
+        (float) viewWidth / mPreviewSize.getWidth());
+      matrix.postScale(scale, scale, centerX, centerY);
+      matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+    } else if (Surface.ROTATION_180 == rotation) {
+      matrix.postRotate(180, centerX, centerY);
+    }
+    textureView.setTransform(matrix);
+  }
+
+  /**
+   * 释放Act和View
+   */
+  public void onDestroyHelper() {
+    stopBackgroundThread();
+    closeCamera();
+    textureView = null;
+    mAfterDoListener = null;
+  }
+
+  private static class CompareSizesByArea implements Comparator<Size> {
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public int compare(Size lhs, Size rhs) {
+      // We cast here to ensure the multiplications won't overflow
+      return Long.signum((long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
+    }
+  }
+
+  private static class ImageSaver implements Runnable {
+
+    private final Image mImage;
+    private final File mFile;
+
+    public ImageSaver(Image image, File file) {
+      mImage = image;
+      mFile = file;
+    }
+
+    @Override
+    public void run() {
+      ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+      byte[] bytes = new byte[buffer.remaining()];
+      FileOutputStream output = null;
+      buffer.get(bytes);
+      try {
+        //原始的转为Bitmap
+        Bitmap bitmap = BitmapUtil.bytes2Bitmap(bytes);
+        //压缩
+        Bitmap bitmapAfter = BitmapUtil.compressBitmapBySampleSize(bitmap, 4);
+        //压缩后的Bitmap 转为Bytes
+        byte[] bytesAfter = BitmapUtil.bitmap2Bytes(bitmapAfter);
+        output = new FileOutputStream(mFile);
+        //写到文件输出流
+        output.write(bytesAfter);
+      } catch (IOException e) {
+        LogUtil.showErroLog(e.getMessage());
+        e.printStackTrace();
+      } finally {
+        mImage.close();
+        if (null != output) {
+          try {
+            output.close();
+          } catch (IOException e) {
+>>>>>>> 21841b3 (feat: save camera picture size & preview size to shared preference file)
             e.printStackTrace();
         } catch (NullPointerException e) {
         }

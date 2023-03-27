@@ -44,6 +44,7 @@
   <uses-permission android:name="android.permission.CAMERA" />
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     <application
         android:name="com.sleticalboy.learning.MainApp"
         android:allowBackup="true"
@@ -189,6 +190,13 @@
             android:permission="com.binlee.permissions.REMOTE_UPGRADE" />
     </application>
 =======
+=======
+  <uses-feature android:name="android.hardware.camera" />
+  <uses-feature
+    android:name="android.hardware.camera.autofocus"
+    android:required="false" />
+
+>>>>>>> 908196f5 (feat: save camera picture size & preview size to shared preference file)
   <application
     android:name="com.binlee.learning.MainApp"
     android:allowBackup="true"
