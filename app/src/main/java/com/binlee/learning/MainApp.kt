@@ -6,9 +6,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.util.Log
-import com.binlee.dl.DlManager
+import android.view.View
+import android.view.ViewGroup
 import com.binlee.learning.components.receiver.GlobalReceiver
 import com.binlee.learning.util.NotificationHelper
+import curtains.Curtains
+import curtains.OnRootViewsChangedListener
 
 /**
  * Created on 18-3-5.
@@ -22,7 +25,25 @@ class MainApp : Application() {
     super.onCreate()
     // DlManager.get().init(this)
     mApp = this
+<<<<<<< HEAD
     adaptAndroidO()
+=======
+    registerNotificationChannels()
+
+    Curtains.onRootViewsChangedListeners += OnRootViewsChangedListener { view, added ->
+      Log.d(TAG, "root $view ${if (added) "added" else "removed"}")
+      if (added) dumpChildren(view)
+    }
+  }
+
+  private fun dumpChildren(root: View) {
+    Log.d(TAG, "dumpChildren() $root")
+    if (root is ViewGroup) {
+      for (i in 0 until root.childCount) {
+        dumpChildren(root.getChildAt(i))
+      }
+    }
+>>>>>>> 736ebad9 (feat: [android] PIP support)
   }
 
 <<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/MainApp.kt
