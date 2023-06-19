@@ -30,10 +30,10 @@ class MainApp : Application() {
 =======
     registerNotificationChannels()
 
-    Curtains.onRootViewsChangedListeners += OnRootViewsChangedListener { view, added ->
-      Log.d(TAG, "root $view ${if (added) "added" else "removed"}")
-      if (added) dumpChildren(view)
-    }
+    // Curtains.onRootViewsChangedListeners += OnRootViewsChangedListener { view, added ->
+    //   Log.d(TAG, "root $view ${if (added) "added" else "removed"}")
+    //   if (added) dumpChildren(view)
+    // }
   }
 
   private fun dumpChildren(root: View) {
