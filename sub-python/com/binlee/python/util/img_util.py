@@ -21,7 +21,7 @@ __clients: dict[str, httpx.Client] = {}
 
 
 def __get_client__(url: str) -> httpx.Client:
-    result: urllib.parse.ParseResult = urllib.parse.urlparse(url)
+    result = urllib.parse.urlparse(url)
     client = __clients.get(result.hostname)
     if not client:
         client = httpx.Client(http2=True, headers=__headers, timeout=3)
@@ -99,13 +99,11 @@ class Image:
 
 class ImageSaver:
 
-    # 保存目录
-    __output_dir = str | None
-    # 要保存的图片集合
-    __images: set[Image] = set()
-
     def __init__(self, output_dir: str, originals=None):
+        # 保存目录
         self.__output_dir = output_dir
+        # 要保存的图片集合
+        self.__images = set()
         if originals:
             for url in originals:
                 self.__images.add(Image(original=url))
