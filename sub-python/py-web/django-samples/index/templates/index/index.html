@@ -1,0 +1,23 @@
+<h1>这是我的第一个 <strong>Django</strong> 应用，包含以下功能：</h1>
+
+{#链接#}
+url: {% url 'polls:index' %} <br>
+all: {{ apps }} {{ apps|length }} <br>
+apps: {{ apps|unordered_list }} <br>
+urls: {{ urls }}
+
+{#输出上下文内容，用于调试#}
+{#{% debug %}#}
+<br>
+{% now 'DATETIME_FORMAT' %} <br>
+{% now 'DATE_FORMAT' %} <br>
+{% now 'SHORT_DATE_FORMAT' %} <br>
+{% now 'SHORT_DATETIME_FORMAT' %} <br>
+
+{% for k, v in apps.items %}
+    <ul>
+        {% if v %}
+            <li>{{ forloop.counter }} - {{ k }}: <a href="{{ k }}">{{ v }}</a></li>
+        {% endif %}
+    </ul>
+{% endfor %}

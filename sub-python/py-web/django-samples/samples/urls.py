@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('polls/', include('polls.urls')),
-    path('admin/', admin.site.urls),
+    path('', include('index.urls')),  # 首页
+    path('polls/', include('polls.urls')),  # 投票界面
+    path('admin/', admin.site.urls),  # 管理界面
+    path('__debug/', include('debug_toolbar.urls')),  # 调试工具
 ]

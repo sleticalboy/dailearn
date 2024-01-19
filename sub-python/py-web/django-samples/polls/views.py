@@ -20,6 +20,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return models.Question.objects.order_by('-pub_date')[:5]
+
     pass
 
 

@@ -26,18 +26,19 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
-
+# Application definition，启用哪些应用
 INSTALLED_APPS = [
-    'polls.apps.PollsConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
+    'index.apps.IndexConfig',  # 首页
+    'polls.apps.PollsConfig',  # 投票
+    'django.contrib.admin',  # 管理端
+    'django.contrib.auth',  # 认证
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.sessions',  # 会话系统
+    'django.contrib.messages',  # 消息系统
+    'django.contrib.staticfiles',  # 静态文件
 ]
 
+# 中间件
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -47,6 +48,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+INTERNAL_IPS = []
+
+
+# 设置调试工具
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    import socket
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    ips = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    INTERNAL_IPS.extend(ips)
+    pass
 
 ROOT_URLCONF = 'samples.urls'
 
@@ -99,9 +113,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
