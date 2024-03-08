@@ -120,6 +120,37 @@ PyObject *to_py_list(std::vector<std::string> &known_keys) {
   return pl;
 }
 
+std::string fetch_error() {
+  PyObject *exc, *value, *traceback;
+  PyErr_Fetch(&exc, &value, &traceback);
+
+  std::string msg{};
+
+  if (exc) {
+    msg = msg + PyExceptionClass_Name(exc) + ": ";
+  }
+
+  if (value) {
+    PyObject *line = PyObject_Str(value);
+    if (line && (PyUnicode_Check(line))) {
+      msg += std::string((char *) PyUnicode_1BYTE_DATA(line));
+    }
+  }
+
+  msg += "\n";
+
+  if (traceback) {
+    for (auto *tb = (PyTracebackObject *) traceback; tb != nullptr; tb = tb->tb_next) {
+      PyObject *line = PyUnicode_FromFormat("  File \"%U\", line %d, in %U()",
+                                            PyFrame_GetCode(tb->tb_frame)->co_filename,
+                                            tb->tb_lineno,
+                                            PyFrame_GetCode(tb->tb_frame)->co_name);
+      msg += std::string((char *)PyUnicode_1BYTE_DATA(line)) + "\n";
+    }
+  }
+  return msg;
+}
+
 void test_algo_obj(PyObject *pm) {
   // 获取 AlgoProc 类
   PyObject *clazz = PyObject_GetAttrString(pm, "AlgoProcImpl");
@@ -156,8 +187,8 @@ void test_algo_obj(PyObject *pm) {
   if (PyCallable_Check(func)) {
     PyObject *ret = PyObject_CallObject(func, nullptr);
     if (ret == nullptr) {
-      printf("PyObject_CallObject('process') failed!\n");
-      PyErr_Print();
+      auto err_msg = fetch_error();
+      printf("PyObject_CallObject('process') failed: %s\n", err_msg.c_str());
       return;
     }
     debug_py_obj(ret, __func__);

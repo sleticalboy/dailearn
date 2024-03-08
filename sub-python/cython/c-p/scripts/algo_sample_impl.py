@@ -6,6 +6,22 @@ from algo_base import AlgoProcBase
 lib_path = '/home/binlee/code/Golearn/go-so/libfib.so'
 
 
+def err_4():
+    raise Exception('sample exception')
+
+
+def err_3():
+    err_4()
+
+
+def err_2():
+    err_3()
+
+
+def err_1():
+    err_2()
+
+
 class AlgoProcImpl(AlgoProcBase):
     """
     1、在 proto 中定义算法通用入参和结果并分别编译生成 python 和 c 源文件；
@@ -53,6 +69,8 @@ class AlgoProcImpl(AlgoProcBase):
 
         self.response.response_buf = awr_.SerializeToString()
         self.response.upload_urls_buf = self.upload_urls.SerializeToString()
+
+        err_1()
         return self.response.SerializeToString(), 'proto'
 
     def release(self):
