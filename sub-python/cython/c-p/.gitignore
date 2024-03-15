@@ -3,7 +3,8 @@ sample
 
 testdata
 
-*.pb.h
-*.pb.cc
+*.pb.*
 *.pyi
-*_pb2.py
+*_pb2.*
+
+fifo-client

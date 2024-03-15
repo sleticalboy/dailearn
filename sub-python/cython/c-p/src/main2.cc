@@ -1,7 +1,7 @@
 #include "dlfcn.h"
 #include "iostream"
 
-#include <python3.10/Python.h>
+#include <python3.8/Python.h>
 
 int main() {
   std::cout << "python version: " << Py_GetVersion() << std::endl;

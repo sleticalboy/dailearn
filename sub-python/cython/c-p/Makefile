@@ -24,4 +24,4 @@ run: sample
 	./sample
 
 clean:
-	rm -rv sample; rm -rv src/gen*; rm -rv src/__init__.py
+	rm -rv sample;

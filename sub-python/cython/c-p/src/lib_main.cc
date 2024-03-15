@@ -1,4 +1,4 @@
-#include <python3.10/Python.h>
+#include <python3.8/Python.h>
 #include <dirent.h>
 #include <string>
 #include <map>
@@ -12,12 +12,6 @@
 
 #include "lib_main.h"
 
-void debug_py_obj(PyObject *obj, const char *who) {
-  if (obj != nullptr) {
-    printf("%s => PyObject is '%s'\n", who, obj->ob_type->tp_name);
-  }
-}
-
 void test_hello_world() {
   // 调用简单语句
   PyRun_SimpleString("print('hello via c call')");
@@ -26,7 +20,7 @@ void test_hello_world() {
 void test_no_arg_func(PyObject *pm) {
   // 调用无参函数
   PyObject *func = PyObject_GetAttrString(pm, "hello");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject_CallObject(func, nullptr);
   }
@@ -35,19 +29,19 @@ void test_no_arg_func(PyObject *pm) {
 void test_arg_func(PyObject *pm) {
   // 调用有参函数
   PyObject *func = PyObject_GetAttrString(pm, "add");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *ret = PyObject_CallObject(func, Py_BuildValue("(ii)", 2, 3));
-    debug_py_obj(ret, __func__);
+    _PyObject_Dump(ret);
     int r;
     PyArg_Parse(ret, "i", &r);
-    printf("2 + 3 = %d\n", r);
+    std::printf("2 + 3 = %d\n", r);
   }
 }
 
 void test_print_list(PyObject *pm) {
   PyObject *func = PyObject_GetAttrString(pm, "print_list");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *list = Py_BuildValue("[ifds(s,s,i)]", 30, 10.8, 0.98, "a C str", "1-str", "2-str", 30);
     PyObject_CallObject(func, Py_BuildValue("(O)", list));
@@ -56,7 +50,7 @@ void test_print_list(PyObject *pm) {
 
 void test_print_dict(PyObject *pm) {
   PyObject *func = PyObject_GetAttrString(pm, "print_dict");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *scores = Py_BuildValue("(iii)", 99, 98, 91);
     PyObject *pdict = Py_BuildValue("{s:s,s:i,s:O}", "name", "tom", "age", 25, "scores", scores);
@@ -71,7 +65,7 @@ void test_obj_func(PyObject *pm) {
   PyObject *tom = PyObject_CallObject(clazz, Py_BuildValue("(s)", "Tom"));
   // 调用 User 实例方法 say_hello
   PyObject *func = PyObject_GetAttrString(tom, "say_hello");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject_CallObject(func, nullptr);
   }
@@ -86,7 +80,7 @@ PyObject *to_py_dict(std::map<std::string, std::string> &raw_map) {
 }
 
 void to_cpp_map(PyObject *pd, std::map<std::string, std::string> &dst) {
-  debug_py_obj(pd, __func__);
+  _PyObject_Dump(pd);
   PyObject *keys = PyDict_Keys(pd);
   Py_ssize_t len = keys == nullptr ? 0 : PyDict_Size(pd);
   for (int i = 0; i < len; ++i) {
@@ -120,105 +114,10 @@ PyObject *to_py_list(std::vector<std::string> &known_keys) {
   return pl;
 }
 
-std::string fetch_error() {
-  PyObject *exc, *value, *traceback;
-  PyErr_Fetch(&exc, &value, &traceback);
-
-  std::string msg{};
-
-  if (exc) {
-    msg = msg + PyExceptionClass_Name(exc) + ": ";
-  }
-
-  if (value) {
-    PyObject *line = PyObject_Str(value);
-    if (line && (PyUnicode_Check(line))) {
-      msg += std::string((char *) PyUnicode_1BYTE_DATA(line));
-    }
-  }
-
-  msg += "\n";
-
-  if (traceback) {
-    for (auto *tb = (PyTracebackObject *) traceback; tb != nullptr; tb = tb->tb_next) {
-      PyObject *line = PyUnicode_FromFormat("  File \"%U\", line %d, in %U()",
-                                            PyFrame_GetCode(tb->tb_frame)->co_filename,
-                                            tb->tb_lineno,
-                                            PyFrame_GetCode(tb->tb_frame)->co_name);
-      msg += std::string((char *)PyUnicode_1BYTE_DATA(line)) + "\n";
-    }
-  }
-  return msg;
-}
-
-void test_algo_obj(PyObject *pm) {
-  // 获取 AlgoProc 类
-  PyObject *clazz = PyObject_GetAttrString(pm, "AlgoProcImpl");
-  // 创建 AlgoProc 类实例
-  PyObject *algo = PyObject_CallObject(clazz, nullptr);
-  // 调用 AlgoProc 实例方法 init
-  PyObject *func = PyObject_GetAttrString(algo, "init");
-  printf("======> %s() pm: %p, init func: %p\n", __func__, pm, func);
-  if (PyCallable_Check(func)) {
-    auto req = py_algopb::PyAlgoRequest();
-    req.set_algo_name("prj-parse");
-    auto whisper = audio_whisperpb::AudioWhisperRequest();
-    whisper.set_language("en");
-    whisper.set_op_type(audio_whisperpb::Whisper);
-    whisper.set_audio_url("https://www.example.com/demo.wav");
-    whisper.set_model_size("medium");
-    req.set_request_buf(whisper.SerializeAsString());
-
-    auto urls = algopb::AlgoDownloadUrlMap();
-    urls.mutable_kvs()->operator[]("audio_url").set_url("https://www.example.com/a.index");
-    urls.mutable_kvs()->operator[]("audio_url").set_is_unzip(true);
-    urls.mutable_kvs()->operator[]("audio_url").set_is_cache(true);
-    req.set_download_urls_buf(urls.SerializeAsString());
-
-    PyObject_CallObject(func, Py_BuildValue("(O)", PyBytes_FromString(req.SerializeAsString().c_str())));
-    if (!PyErr_CheckSignals()) {
-      PyErr_Print();
-    }
-  }
-
-  // 调用 AlgoProc 实例方法 process
-  func = PyObject_GetAttrString(algo, "process");
-  printf("======> %s() pm: %p, process func: %p\n", __func__, pm, func);
-  if (PyCallable_Check(func)) {
-    PyObject *ret = PyObject_CallObject(func, nullptr);
-    if (ret == nullptr) {
-      auto err_msg = fetch_error();
-      printf("PyObject_CallObject('process') failed: %s\n", err_msg.c_str());
-      return;
-    }
-    debug_py_obj(ret, __func__);
-    char *fmt = nullptr;
-    char *buf = PyBytes_AsString(PyTuple_GetItem(ret, 0));
-    PyArg_Parse(PyTuple_GetItem(ret, 1), "s", &fmt);
-    printf("%s() buf: %s, fmt: %s\n", __func__, buf, fmt);
-
-    auto resp = py_algopb::PyAlgoResponse();
-    if (strcmp(fmt, "proto") == 0) {
-      resp.ParseFromString(buf);
-    } else {
-      if (!google::protobuf::util::JsonStringToMessage(buf, &resp).ok()) {
-        // failed
-      }
-    }
-    printf("%s() response: %s", __func__, resp.SerializeAsString().c_str());
-  }
-  // 调用 AlgoProc 实例方法 release
-  func = PyObject_GetAttrString(algo, "release");
-  printf("======> %s() pm: %p, release func: %p\n", __func__, pm, func);
-  if (PyCallable_Check(func)) {
-    PyObject_CallObject(func, nullptr);
-  }
-}
-
 void test_get_list(PyObject *pm) {
   // 调用无参函数
   PyObject *func = PyObject_GetAttrString(pm, "get_list");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *list = PyObject_CallObject(func, nullptr);
     Py_ssize_t size = PyList_Size(list);
@@ -228,33 +127,33 @@ void test_get_list(PyObject *pm) {
       PyArg_Parse(it, "s", &s);
       printf("list[%d]: %s, ", i, s);
     }
-    printf("\n");
+    std::printf("\n");
   }
 }
 
 void test_get_dict(PyObject *pm) {
   // 调用无参函数
   PyObject *func = PyObject_GetAttrString(pm, "get_dict");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *dict = PyObject_CallObject(func, nullptr);
     char *name;
     int age;
     PyArg_Parse(PyDict_GetItemString(dict, "name"), "s", &name);
     PyArg_Parse(PyDict_GetItemString(dict, "age"), "i", &age);
-    printf("dict: name: %s, age: %d\n", name, age);
+    std::printf("dict: name: %s, age: %d\n", name, age);
   }
 }
 
 void test_get_user(PyObject *pm) {
   // 调用无参函数
   PyObject *func = PyObject_GetAttrString(pm, "get_user");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *user = PyObject_CallObject(func, nullptr);
-    debug_py_obj(user, __func__);
+    _PyObject_Dump(user);
     func = PyObject_GetAttrString(user, "say_hello");
-    printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+    std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
     if (PyCallable_Check(func)) {
       PyObject_CallObject(func, nullptr);
     }
@@ -263,7 +162,7 @@ void test_get_user(PyObject *pm) {
 
 PyObject *wrapped_square(PyObject *, PyObject *args) {
   // 这个 args 是 python 传过来的参数，类型是 tuple
-  debug_py_obj(args, __func__);
+  _PyObject_Dump(args);
   int num;
   // static char *kwlist[] = {"num", nullptr};
   // if (!PyArg_ParseTupleAndKeywords(args, kws, "i", kwlist, &num)) {
@@ -276,7 +175,7 @@ PyObject *wrapped_square(PyObject *, PyObject *args) {
 
 PyObject *wrapped_post_value(PyObject *, PyObject *args) {
   // 这个 args 是 python 传过来的参数，类型是 tuple
-  debug_py_obj(args, __func__);
+  _PyObject_Dump(args);
   int num;
   char *msg;
   // 这三种方式均可以解析 tuple
@@ -287,14 +186,14 @@ PyObject *wrapped_post_value(PyObject *, PyObject *args) {
     PyErr_SetString(PyExc_RuntimeError, "Failed to parse python args");
     Py_RETURN_NONE;
   }
-  printf("num: %d, msg: %s\n", num, msg);
+  std::printf("num: %d, msg: %s\n", num, msg);
   // return Py_BuildValue("i", 0);
   Py_RETURN_NONE;
 }
 
 PyObject *wrapped_sum_int(PyObject *, PyObject *args) {
   // 这个 args 是 python 传过来的参数，类型是 tuple
-  debug_py_obj(args, __func__);
+  _PyObject_Dump(args);
   int a, b;
   if (!PyArg_ParseTuple(args, "ii", &a, &b)) {
     PyErr_SetString(PyExc_RuntimeError, "Failed to parse python args");
@@ -305,8 +204,8 @@ PyObject *wrapped_sum_int(PyObject *, PyObject *args) {
 
 PyObject *wrapped_gen_path(PyObject *, PyObject *args, PyObject *kwargs) {
   // args 类型是 tuple, kwargs 类型为 dict
-  debug_py_obj(args, "wrapped_gen_path() args");
-  debug_py_obj(kwargs, "wrapped_gen_path() kwargs");
+  _PyObject_Dump(args);
+  _PyObject_Dump(kwargs);
 
   // def generate_path(self, suffix: str = None, additional: str = None) -> str:
   char *suffix = nullptr;
@@ -317,7 +216,7 @@ PyObject *wrapped_gen_path(PyObject *, PyObject *args, PyObject *kwargs) {
       PyErr_SetString(PyExc_RuntimeError, "Failed to parse gen_path() kwargs");
       return nullptr;
     }
-    printf("kw args suffix: %s, additional: %s\n", suffix, addition);
+    std::printf("kw args suffix: %s, additional: %s\n", suffix, addition);
   }
 
   std::stringstream path_;
@@ -342,7 +241,7 @@ PyObject *wrapped_on_progress(PyObject *, PyObject *args) {
     return nullptr;
   }
   if ((int) progress % 10 == 0) {
-    printf("%s() progress: %.2f%%\n", __func__, progress);
+    std::printf("%s() progress: %.2f%%\n", __func__, progress);
   }
   Py_RETURN_NONE;
 }
@@ -376,10 +275,10 @@ PyMODINIT_FUNC PyInit_nativeFunctions(void) {
 void test_set_cpp_callback(PyObject *pm) {
   // 向 python 传递 c 函数指针
   PyObject *func = PyObject_GetAttrString(pm, "set_cpp_callback");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject *r = PyObject_CallObject(func, Py_BuildValue("(O)", PyInit_nativeFunctions()));
-    debug_py_obj(r, __func__);
+    _PyObject_Dump(r);
     PyErr_Print();
   }
 }
@@ -387,7 +286,7 @@ void test_set_cpp_callback(PyObject *pm) {
 void test_do_hard_work(PyObject *pm) {
   // 调用无参函数
   PyObject *func = PyObject_GetAttrString(pm, "do_hard_work");
-  printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
+  std::printf("======> %s() pm: %p, func: %p\n", __func__, pm, func);
   if (PyCallable_Check(func)) {
     PyObject_CallObject(func, nullptr);
   }
@@ -396,7 +295,7 @@ void test_do_hard_work(PyObject *pm) {
 void test_protobuf(PyObject *pm) {
   // 调用无参函数
   PyObject *func = PyObject_GetAttrString(pm, "parse_protobuf");
-  printf("======> %s() pm: %p, func: %p, proto version: %d\n", __func__, pm, func, GOOGLE_PROTOBUF_VERSION);
+  std::printf("======> %s() pm: %p, func: %p, proto version: %d\n", __func__, pm, func, GOOGLE_PROTOBUF_VERSION);
   if (PyCallable_Check(func)) {
     auto url = algopb::AlgoDownloadUrl();
     url.set_url("https://example.com/index.html");
@@ -412,7 +311,7 @@ std::string find_algo_impl_module(const std::string &who) {
   char *cwd = getcwd(nullptr, 0);
   std::string root = std::string(cwd) + "/" + who;
   delete[] cwd;
-  printf("%s() starting find algo module in: %s\n", __func__, root.c_str());
+  std::printf("%s() starting find algo module in: %s\n", __func__, root.c_str());
   auto dir = opendir(root.c_str());
   struct dirent *f;
   while ((f = readdir(dir)) != nullptr) {
@@ -424,19 +323,88 @@ std::string find_algo_impl_module(const std::string &who) {
     auto pos = s.rfind('.');
     if (pos == std::string::npos) continue;
     auto name = s.substr(0, pos);
-    // printf("%s() pure name is: %s\n", __func__, name.c_str());
     pos = name.rfind("_impl");
     if (pos != std::string::npos && name.substr(pos) == "_impl" && name.find("algo_") == 0) {
-      return name;
+      return {name};
     }
   }
-  return "";
+  return {};
+}
+
+void test_algo_obj(PyObject *pm) {
+  // 获取 AlgoProc 类
+  PyObject *clazz = PyObject_GetAttrString(pm, "AlgoProcImpl");
+  std::printf("%s() clazz: %p\n", __func__, clazz);
+  PyObject *func = PyObject_GetAttrString(clazz, "set_callback");
+  std::printf("%s() set_callback: %p\n", __func__, func);
+  PyObject_CallObject(func, Py_BuildValue("(O)", PyInit_nativeFunctions()));
+  // 创建 AlgoProc 类实例
+  PyObject *impl = PyObject_CallObject(clazz, nullptr);
+  std::printf("%s() impl: %p\n", __func__, impl);
+  if (impl == nullptr) {
+    PyErr_Print();
+    return;
+  }
+  // 调用 AlgoProc 实例方法 init
+  func = PyObject_GetAttrString(impl, "init");
+  std::printf("======> %s() pm: %p, init func: %p\n", __func__, pm, func);
+  if (PyCallable_Check(func)) {
+    auto req = py_algopb::PyAlgoRequest();
+    req.set_algo_name("prj-parse");
+    auto whisper = audio_whisperpb::AudioWhisperRequest();
+    whisper.set_language("en");
+    whisper.set_op_type(audio_whisperpb::Whisper);
+    whisper.set_audio_url("https://www.example.com/demo.wav");
+    whisper.set_model_size("medium");
+    req.set_request_buf(whisper.SerializeAsString());
+
+    auto urls = algopb::AlgoDownloadUrlMap();
+    urls.mutable_kvs()->operator[]("audio_url").set_url("https://www.example.com/a.index");
+    urls.mutable_kvs()->operator[]("audio_url").set_is_unzip(true);
+    urls.mutable_kvs()->operator[]("audio_url").set_is_cache(true);
+    req.set_download_urls_buf(urls.SerializeAsString());
+
+    PyObject_CallObject(func, Py_BuildValue("(O)", PyBytes_FromString(req.SerializeAsString().c_str())));
+    if (!PyErr_CheckSignals()) {
+      PyErr_Print();
+    }
+  }
+
+  // 调用 AlgoProc 实例方法 process
+  func = PyObject_GetAttrString(impl, "process");
+  std::printf("======> %s() pm: %p, process func: %p\n", __func__, pm, func);
+  if (PyCallable_Check(func)) {
+    PyObject *ret = PyObject_CallObject(func, nullptr);
+    if (ret == nullptr) {
+      printf("PyObject_CallObject('process') failed!\n");
+      PyErr_Print();
+      return;
+    }
+    _PyObject_Dump(ret);
+    char *fmt = nullptr;
+    PyArg_Parse(PyTuple_GetItem(ret, 1), "s", &fmt);
+    char *buf = PyBytes_AsString(PyTuple_GetItem(ret, 0));
+    auto resp = py_algopb::PyAlgoResponse();
+    if (strcmp(fmt, "proto") == 0) {
+      resp.ParseFromString(buf);
+    } else {
+      if (!google::protobuf::util::JsonStringToMessage(buf, &resp).ok()) {
+        // failed
+      }
+    }
+  }
+  // 调用 AlgoProc 实例方法 release
+  func = PyObject_GetAttrString(impl, "release");
+  std::printf("======> %s() pm: %p, release func: %p\n", __func__, pm, func);
+  if (PyCallable_Check(func)) {
+    PyObject_CallObject(func, nullptr);
+  }
 }
 
 int run_main_test() {
   // 初始化
   Py_Initialize();
-  test_hello_world();
+  // test_hello_world();
 
   // 导入当前目录
   PyRun_SimpleString("import sys\nsys.path.append('./scripts')");
@@ -445,10 +413,10 @@ int run_main_test() {
   // 找到并导入当前算法脚本文件，命名规则要符合 algo_xxx_impl.py
   auto algo_module = find_algo_impl_module("scripts");
   if (algo_module.empty()) {
-    perror("cannot find an algo impl module.\n");
+    std::perror("cannot find an algo impl module.\n");
     return -1;
   }
-  printf("%s() find algo impl module: %s\n", __func__, algo_module.c_str());
+  std::printf("%s() find algo impl module: %s\n", __func__, algo_module.c_str());
   pm = PyImport_ImportModule(algo_module.c_str());
   std::cout << "run_main_test() algo impl pm: " << pm << std::endl;
   if (pm != nullptr) {
@@ -459,15 +427,15 @@ int run_main_test() {
 
   return 0;
 
-  printf("\n%s() start test samples modules...\n", __func__);
+  std::printf("\n%s() start test samples modules...\n", __func__);
 
   try {
     pm = PyImport_ImportModule("samples");
     PyErr_Print();
   } catch (std::exception &e) {
-    printf("PyImport_ImportModule() failed: %s\n", e.what());
+    std::printf("PyImport_ImportModule() failed: %s\n", e.what());
   }
-  printf("%s() samples pm: %p\n", __func__, pm);
+  std::printf("%s() samples pm: %p\n", __func__, pm);
   if (pm != nullptr) {
     // test_no_arg_func(pm);
     // test_arg_func(pm);

@@ -1,9 +1,18 @@
-import ctypes
+import logging
 import os
 
 from algo_base import AlgoProcBase
 
-lib_path = '/home/binlee/code/Golearn/go-so/libfib.so'
+
+class GoLib:
+
+    def __init__(self):
+        lib_path = '/home/binlee/code/Golearn/go-so/libfib.so'
+        import ctypes
+        self.lib = ctypes.cdll.LoadLibrary(lib_path)
+
+    def say_hello(self, msg):
+        self.lib.HelloGo(bytes(msg))
 
 
 def err_4():
@@ -32,46 +41,22 @@ class AlgoProcImpl(AlgoProcBase):
 
     def __init__(self):
         super().__init__()
-        self.lib = None
 
-    def init(self, req_buf: bytes):
-        super().init(req_buf)
-        from py_algo_pb2 import PyAlgoRequest, PyAlgoResponse
-        from algo_pb2 import AlgoDownloadUrlMap, AlgoUploadUrlMap
-        self.request = PyAlgoRequest()
-        self.download_urls = AlgoDownloadUrlMap()
-        self.request.ParseFromString(req_buf)
-        self.download_urls.ParseFromString(self.request.download_urls_buf)
-
-        self.name = self.request.algo_name
-
-        self.response = PyAlgoResponse()
-        self.upload_urls = AlgoUploadUrlMap()
-
-        self.lib = ctypes.cdll.LoadLibrary(lib_path)
-
-    def process(self) -> (bytes, str):
-        print(f"[{self.name}]#process()")
-
+    def process_impl(self):
+        super().process_impl()
         from audio_whisper_pb2 import AudioWhisperRequest, AudioWhisperResponse
-        awr = AudioWhisperRequest.FromString(self.request.request_buf)
-        print(f'real request: {awr}')
-        print(f'real files: {self.download_urls}')
+        req = AudioWhisperRequest()
+        req.ParseFromString(self.req_buf)
+        logging.warning(f'request is: {req}')
 
-        awr_ = AudioWhisperResponse()
-        awr_.language = 'en'
-        awr_.audio_duration = 3000
-        awr_.out_json_url = '/xxx/s/d.json'
-
-        self.lib.HelloGo(b"Python 3")
-
-        self.upload_urls.kvs.setdefault(awr_.out_json_url)
-
-        self.response.response_buf = awr_.SerializeToString()
-        self.response.upload_urls_buf = self.upload_urls.SerializeToString()
-
-        err_1()
-        return self.response.SerializeToString(), 'proto'
+        resp = AudioWhisperResponse()
+        resp.language = req.language
+        resp.audio_duration = 3000
+        resp.out_json_url = req.audio_url[0:req.audio_url.rfind('.')] + '.json'
+        resp.op_type = resp.op_type
+        logging.warning(f'response is: {resp}')
+        self.upload_urls.kvs.setdefault(resp.out_json_url)
+        self.resp_buf = resp.SerializeToString()
 
     def release(self):
         print(f"[{self.name}]#release()")
@@ -82,16 +67,22 @@ if __name__ == '__main__':
     from py_algo_pb2 import PyAlgoRequest, PyAlgoResponse
     from algo_pb2 import AlgoDownloadUrlMap
 
-    _proc = AlgoProcImpl('prj-export')
+    _proc = AlgoProcImpl()
     _req = PyAlgoRequest()
     _req.algo_name = 'prj-export'
-    with open(test_data + '/request.pbuf.txt', 'rb') as f:
-        _req.request_buf = f.read()
-    with open(test_data + '/request-files.pbuf.txt', 'rb') as f:
-        _req.download_urls_buf = f.read()
-    with open(test_data + '/request-full-python.pbuf.txt', 'wb') as f:
-        f.write(_req.SerializeToString())
-    _rep_buf = _proc.process(_req.SerializeToString())
+    from audio_whisper_pb2 import AudioWhisperRequest
+
+    awr = AudioWhisperRequest()
+    awr.op_type = 0
+    awr.audio_url = 'http://example.com/a.wav'
+    awr.model_size = 'medium'
+    _req.request_buf = awr.SerializeToString()
+    urls = AlgoDownloadUrlMap()
+    urls.kvs.setdefault(awr.audio_url)
+    _req.download_urls_buf = urls.SerializeToString()
+    _proc.init(_req.SerializeToString())
+    _rep_buf, _fmt = _proc.process()
     _proc.release()
-    _rep = PyAlgoResponse.FromString(_rep_buf)
-    print(f'output {type(_rep)}\n{_rep}')
+    _rep = PyAlgoResponse()
+    _rep.ParseFromString(_rep_buf)
+    print(f'output {type(_rep)} -> {_rep.__str__()}')

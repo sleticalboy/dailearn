@@ -7,7 +7,7 @@ project(c-p)
 #set(CMAKE_CXX_COMPILER clang++)
 
 include_directories(
-        /usr/include/python3.10
+        /usr/include/python3.8
         /usr/include/google/protobuf
         /src/cc
 )
@@ -29,22 +29,6 @@ add_executable(sample
         src/cc/py_algo.pb.cc
         src/cc/audio_whisper.pb.cc
         )
-target_link_libraries(sample python3.10 protobuf)
+target_link_libraries(sample python3.8 protobuf)
 
-# 编译共享库
-add_library(sample-so SHARED
-        src/main.cc
-        src/lib_main.cc
-        src/cc/py_algo.pb.cc
-        src/cc/audio_whisper.pb.cc
-        )
-target_link_libraries(sample-so python3.10 protobuf)
-
-# 编译二进制程序
-add_executable(sample2 src/main2.cc)
-target_link_libraries(sample2 python3.10 protobuf)
-#target_link_libraries(sample2
-#        -Wl,--whole-archive
-#        python3.10 protobuf
-#        -Wl,--whole-archive
-#        )
+add_executable(fifo-client src/fifo-client.cpp)
