@@ -28,7 +28,8 @@ add_executable(sample
         src/cc/algox.pb.cc
         src/cc/py_algo.pb.cc
         src/cc/audio_whisper.pb.cc
+        src/fifo-client.cpp src/fifo-client.h
         )
 target_link_libraries(sample python3.8 protobuf)
 
-add_executable(fifo-client src/fifo-client.cpp)
+add_executable(socket-client src/socket-client.cpp)

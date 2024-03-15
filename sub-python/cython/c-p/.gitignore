@@ -8,3 +8,4 @@ testdata
 *_pb2.*
 
 fifo-client
+socket-client
