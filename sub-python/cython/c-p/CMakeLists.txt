@@ -32,4 +32,4 @@ add_executable(sample
         )
 target_link_libraries(sample python3.8 protobuf)
 
-add_executable(socket-client src/socket-client.cpp)
+add_executable(socket-client src/socket-client.cpp src/httplib.h)

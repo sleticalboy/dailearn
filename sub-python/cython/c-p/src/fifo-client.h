@@ -7,6 +7,7 @@
 
 #include <string>
 #include <fcntl.h>
+#include <unistd.h>
 
 class FifoClient {
 private:
