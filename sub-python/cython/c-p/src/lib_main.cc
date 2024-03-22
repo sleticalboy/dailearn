@@ -362,7 +362,7 @@ void test_algo_obj(PyObject *pm) {
     urls.mutable_kvs()->operator[]("audio_url").set_url("https://www.example.com/a.index");
     urls.mutable_kvs()->operator[]("audio_url").set_is_unzip(true);
     urls.mutable_kvs()->operator[]("audio_url").set_is_cache(true);
-    req.set_download_urls_buf(urls.SerializeAsString());
+    req.set_allocated_download_urls(&urls);
 
     PyObject_CallObject(func, Py_BuildValue("(O)", PyBytes_FromString(req.SerializeAsString().c_str())));
     if (!PyErr_CheckSignals()) {

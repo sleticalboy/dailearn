@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "gitlab.quvideo.com/algo/grpc.git/algoxpb";
+
 package algoxpb;
 
 // gen python

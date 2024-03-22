@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "gitlab.quvideo.com/algo/grpc.git/algopb";
+
 package algopb;
 
 // gen python
@@ -118,6 +120,7 @@ message AlgoRequest {
 
 	algopb.AlgoSerializeBuffer buffer = 10;
 }
+
 
 message AlgoResponse {
 	algopb.AlgoProcessStatus process_status = 1;

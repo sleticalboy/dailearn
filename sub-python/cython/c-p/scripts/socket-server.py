@@ -96,25 +96,54 @@ def predict(r):
     buf = r.rfile.read(size)
     logging.warning(f'req buf: {buf}')
 
-    resp_buf = json.dumps({'code': 0, 'msg': 'OK'})
+    resp_buf = None
+    try:
+        from google.protobuf import __version__
+        logging.warning(f'proto version: {__version__}')
+        import algox_pb2, algo_pb2, audio_whisper_pb2
+        from py_algo_pb2 import PyAlgoRequest, PyAlgoResponse
+        from audio_whisper_pb2 import AudioWhisperRequest, AudioWhisperResponse
+        py_req = PyAlgoRequest()
+        py_req.ParseFromString(buf)
+
+        logging.error(f'py req buf: {py_req.request_buf}')
+
+        whisper_req = AudioWhisperRequest()
+        whisper_req.ParseFromString(py_req.request_buf)
+
+        logging.error(f'urls: {py_req.download_urls}, whisper req: {whisper_req}')
+
+        py_resp = PyAlgoResponse()
+        whisper_resp = AudioWhisperResponse()
+        whisper_resp.op_type = whisper_req.op_type
+        whisper_resp.language = whisper_req.language
+        whisper_resp.full_text = 'hello world'
+        whisper_resp.text_start_ts = 20
+        whisper_resp.text_end_ts = 30000
+        whisper_resp.out_json_url = 'hello'
+        py_resp.upload_urls.kvs.get_or_create("hello").url = "world"
+        py_resp.response_buf = whisper_resp.SerializeToString()
+        resp_buf = py_resp.SerializeToString()
+    except BaseException as e:
+        logging.exception(e)
+    finally:
+        pass
+
+    # resp_buf = json.dumps({'code': 0, 'msg': 'OK'})
     r.send_response(200, 'OK')
 
-    r.send_header('Content-Type', 'application/json')
+    r.send_header('Content-Type', 'application/protobuf')
     r.send_header('Content-Length', str(len(resp_buf)))
     r.send_header('Connection', 'keep-alive')
     r.end_headers()
-    r.wfile.write(resp_buf.encode('UTF-8', 'replace'))
+    # r.wfile.write(resp_buf.encode('UTF-8', 'replace'))
+    r.wfile.write(resp_buf)
     pass
 
 
 if __name__ == '__main__':
-    # RequestHandler.register('GET', '/healthz', healthy)
-    # RequestHandler.register('POST', '/predict', predict)
-    # server = HTTPServer(('127.0.0.1', 50000), RequestHandlerClass=RequestHandler)
-    # server.serve_forever()
-    sys.stderr.write(_ansi_style('hello stderr\n', 'bold'))
-    sys.stderr.write(_ansi_style('hello stderr\n', 'red'))
-    sys.stderr.write(_ansi_style('hello stderr\n', 'green'))
-    sys.stderr.write(_ansi_style('hello stderr\n', 'yellow'))
-    sys.stderr.write(_ansi_style('hello stderr\n', 'magenta'))
+    RequestHandler.register('GET', '/healthz', healthy)
+    RequestHandler.register('POST', '/predict', predict)
+    server = HTTPServer(('127.0.0.1', 50000), RequestHandlerClass=RequestHandler)
+    server.serve_forever()
     pass

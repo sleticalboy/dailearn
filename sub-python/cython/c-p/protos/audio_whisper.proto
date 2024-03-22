@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+option go_package = "gitlab.quvideo.com/algo/grpc.git/audio_whisperpb";
+
 package audio_whisperpb;
 
 import "algox.proto";
@@ -46,7 +48,7 @@ message AudioWhisperResponse {
   algoxpb.AlgoStatus status = 1;
   // 输出文本处理结果 url
   string out_json_url = 2;
-  // 输入音频时长
+  // 输入音频时长，单位 ms
   int64 audio_duration = 3;
   // 语种
   string language = 4;
@@ -54,4 +56,10 @@ message AudioWhisperResponse {
   OpType op_type = 5;
   // 语句分割结果
   repeated SplitSpec split_results = 6;
+  // 输出文本起始时间，单位 ms
+  int64 text_start_ts = 7;
+  // 输出文本结束时间，单位 ms
+  int64 text_end_ts = 8;
+  // 所有的文本内容
+  string full_text = 9;
 }
