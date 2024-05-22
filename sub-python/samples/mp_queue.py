@@ -37,8 +37,5 @@ def run_main():
 
 
 if __name__ == '__main__':
-
-    from tee import Tee
-
     run_main()
     pass
