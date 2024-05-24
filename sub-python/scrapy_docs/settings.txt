@@ -1,0 +1,26 @@
+Usage
+=====
+  scrapy settings [options]
+
+Get settings values
+
+Options
+=======
+  -h, --help            show this help message and exit
+  --get SETTING         print raw setting value
+  --getbool SETTING     print setting value, interpreted as a boolean
+  --getint SETTING      print setting value, interpreted as an integer
+  --getfloat SETTING    print setting value, interpreted as a float
+  --getlist SETTING     print setting value, interpreted as a list
+
+Global Options
+--------------
+  --logfile FILE        log file. if omitted stderr will be used
+  -L LEVEL, --loglevel LEVEL
+                        log level (default: DEBUG)
+  --nolog               disable logging completely
+  --profile FILE        write python cProfile stats to FILE
+  --pidfile FILE        write process ID to FILE
+  -s NAME=VALUE, --set NAME=VALUE
+                        set/override setting (may be repeated)
+  --pdb                 enable pdb on failure

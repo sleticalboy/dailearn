@@ -1,0 +1,23 @@
+Usage
+=====
+  scrapy version [-v]
+
+Print Scrapy version
+
+Options
+=======
+  -h, --help            show this help message and exit
+  --verbose, -v         also display twisted/python/platform info (useful for
+                        bug reports)
+
+Global Options
+--------------
+  --logfile FILE        log file. if omitted stderr will be used
+  -L LEVEL, --loglevel LEVEL
+                        log level (default: DEBUG)
+  --nolog               disable logging completely
+  --profile FILE        write python cProfile stats to FILE
+  --pidfile FILE        write process ID to FILE
+  -s NAME=VALUE, --set NAME=VALUE
+                        set/override setting (may be repeated)
+  --pdb                 enable pdb on failure
