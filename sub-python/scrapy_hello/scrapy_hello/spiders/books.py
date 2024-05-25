@@ -3,6 +3,8 @@ import sys
 import scrapy
 from scrapy.http import Response
 
+from ..items import BookItem
+
 
 # -t: basic crawl csvfeed xmlfeed
 # scrapy genspider -t basic books books.toscrape.com
@@ -12,19 +14,34 @@ class BooksSpider(scrapy.Spider):
     name = "books"
     # 允许爬取哪些域名
     allowed_domains = ["books.toscrape.com"]
-    # 起始 url
+    # 爬虫起始点 (start_request()方法)
     start_urls = ["https://books.toscrape.com"]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # 记录已处理了多少页数据
+        self.pages = 0
 
     # 页面解析：生成器函数
     def parse(self, response: Response, **kwargs):
-        for book in response.css('article.product_pod'):
-            name = book.xpath('./h3/a/@title').extract_first()
-            price = book.css('p.price_color::text').extract_first()
+        self.pages += 1
+        # 解析数据
+        for item in response.css('article.product_pod'):
+            name = item.xpath('./h3/a/@title').extract_first()
+            price = item.css('p.price_color::text').extract_first()
             # print(f'=== name: {name}, price: {price}', file=sys.stderr)
-            yield {'name': name, 'price': price}
+            # 方式一、使用 dict 存储数据
+            # yield {'name': name, 'price': price}
+            # 方式二、使用自定义 Item 存储数据
+            book = BookItem()
+            book['name'] = name
+            book['price'] = price
+            yield book
+            pass
         # 下一页 # ul.paget li.next a::attr(href)
         next_url = response.css('ul.pager li.next a::attr(href)').extract_first()
         print(f'=== next url: {next_url}', file=sys.stderr)
-        if next_url:
+        if next_url and self.pages < 2:
+            # 构造下一个 requst 并返回
             yield scrapy.Request(response.urljoin(next_url), callback=self.parse)
         pass

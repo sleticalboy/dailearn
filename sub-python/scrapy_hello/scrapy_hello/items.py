@@ -6,7 +6,11 @@
 import scrapy
 
 
-class ScrapyHelloItem(scrapy.Item):
+# 自定义 item
+class BookItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
+    # name = scrapy.Field(serilizer=lambda s: ''.join(s))
+    name = scrapy.Field()
+    price = scrapy.Field()
     pass
+
