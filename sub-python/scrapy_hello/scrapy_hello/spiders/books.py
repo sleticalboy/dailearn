@@ -49,6 +49,9 @@ class BooksSpider(scrapy.Spider):
 
     @classmethod
     def parse_detail(cls, response: Response):
+        img_url = response.css('#product_gallery>div>div>div>img::attr(src)').extract_first()
+        img_url = response.urljoin(img_url)
+
         main = response.css('div.product_main')
         name = main.xpath('./h1/text()').extract_first()
         price = main.css('p.price_color::text').extract_first()
@@ -59,7 +62,6 @@ class BooksSpider(scrapy.Spider):
         stock = table.xpath('.//tr[last()-1]/td/text()').re_first(r'\((\d+) available\)')
         review_num = table.xpath('.//tr[last()]/td/text()').extract_first()
 
-        # print(f'=== name: {name}, price: {price}', file=sys.stderr)
         # 方式一、使用 dict 存储数据
         # yield {'name': name, 'price': price}
         # 方式二、使用自定义 Item 存储数据
@@ -70,4 +72,8 @@ class BooksSpider(scrapy.Spider):
         book['review_num'] = review_num
         book['upc'] = upc
         book['stock'] = stock
+        book['img_url'] = img_url
+
+        img_urls = book.setdefault('file_urls', [])
+        img_urls.append(img_url)
         yield book

@@ -62,8 +62,11 @@ TELNETCONSOLE_ENABLED = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
+    "scrapy.pipelines.files.FilesPipeline": 1,  # 使用文件下载
     "scrapy_hello.pipelines.BookPricePipeline": 300,
 }
+# 文件存储目录
+FILES_STORE = '/home/binlee/code/dailearn/sub-python/scrapy_hello/out'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -93,4 +96,6 @@ FEED_EXPORT_ENCODING = "utf-8"
 # 自定义导出
 FEED_EXPORTERS = {'txt': 'scrapy_hello.exporters.TxtExporter'}
 # 哪些字段可以被导出
-FEED_EXPORT_FIELDS = ['upc', 'name', 'price', 'stock', 'review_rating', 'review_num']
+FEED_EXPORT_FIELDS = [
+    'upc', 'name', 'price', 'stock', 'review_rating', 'review_num', 'img_url'
+]

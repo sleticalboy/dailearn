@@ -16,5 +16,8 @@ class BookItem(scrapy.Item):
     review_rating = scrapy.Field()
     review_num = scrapy.Field(serializer=lambda o: int(o))
     stock = scrapy.Field(serializer=lambda o: int(o))
+    img_url = scrapy.Field()
+    file_urls = scrapy.Field()
+    files = scrapy.Field()
     pass
 
