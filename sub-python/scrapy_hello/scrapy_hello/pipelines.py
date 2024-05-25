@@ -9,13 +9,19 @@ from scrapy.crawler import Crawler
 
 
 # 自定义 pipeline
-# 1、
-# 2、写入文件、数据库
-# 3、数据清洗（去重、去损、去过期）
-# 4、统计
+# 1、写入文件、数据库
+# 2、数据清洗（去重、去损、去过期）
+# 3、统计
 class BookPricePipeline:
 
     _rate = 8.539
+    _mapper = {
+        "One": 1,
+        "Two": 2,
+        "Three": 3,
+        "Four": 4,
+        "Five": 5,
+    }
 
     @classmethod
     def from_crawler(cls, crawler: Crawler):
@@ -53,6 +59,9 @@ class BookPricePipeline:
     def process_item(self, item, spider):
         # 如果返回 item 则正常处理，如果抛出 DropItem 异常则丢弃该条数据
         # adapter = ItemAdapter(item)
+        rating = item.get('review_rating')
+        if rating:
+            item['review_rating'] = self._mapper[rating]
         if item.get('price'):
             price = float(item['price'][1:]) * self._rate
             item['price'] = f'￥{price:.2f}'

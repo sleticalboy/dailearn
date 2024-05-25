@@ -29,16 +29,8 @@ class BooksSpider(scrapy.Spider):
         self.pages += 1
         # 解析数据
         for item in response.css('article.product_pod'):
-            name = item.xpath('./h3/a/@title').extract_first()
-            price = item.css('p.price_color::text').extract_first()
-            # print(f'=== name: {name}, price: {price}', file=sys.stderr)
-            # 方式一、使用 dict 存储数据
-            # yield {'name': name, 'price': price}
-            # 方式二、使用自定义 Item 存储数据
-            book = BookItem()
-            book['name'] = name
-            book['price'] = price
-            yield book
+            book_url = item.css('div.image_container>a::attr(href)').extract_first()
+            yield scrapy.Request(response.urljoin(book_url), callback=self.parse_detail)
             pass
         # 获取下一页连接 ul.paget li.next a::attr(href)
         # 方式一、通过 css 选择器
@@ -54,3 +46,28 @@ class BooksSpider(scrapy.Spider):
         if links and len(links) > 0 and self.pages < 2:
             yield scrapy.Request(links[0].url, callback=self.parse)
         pass
+
+    @classmethod
+    def parse_detail(cls, response: Response):
+        main = response.css('div.product_main')
+        name = main.xpath('./h1/text()').extract_first()
+        price = main.css('p.price_color::text').extract_first()
+        review_rating = main.css('p.star-rating::attr(class)').re_first('star-rating ([A-Za-z]+)')
+
+        table = response.css('table.table.table-striped')
+        upc = table.xpath('.//tr[1]/td/text()').extract_first()
+        stock = table.xpath('.//tr[last()-1]/td/text()').re_first(r'\((\d+) available\)')
+        review_num = table.xpath('.//tr[last()]/td/text()').extract_first()
+
+        # print(f'=== name: {name}, price: {price}', file=sys.stderr)
+        # 方式一、使用 dict 存储数据
+        # yield {'name': name, 'price': price}
+        # 方式二、使用自定义 Item 存储数据
+        book = BookItem()
+        book['name'] = name
+        book['price'] = price
+        book['review_rating'] = review_rating
+        book['review_num'] = review_num
+        book['upc'] = upc
+        book['stock'] = stock
+        yield book
