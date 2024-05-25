@@ -10,6 +10,7 @@ from ..items import BookItem
 # -t: basic crawl csvfeed xmlfeed
 # scrapy genspider -t basic books books.toscrape.com
 # scrapy crawl books -o out/books.csv
+# scrapy crawl books -o 'out/%(name)s-%(time)s.xml'
 class BooksSpider(scrapy.Spider):
     # 爬虫的名字
     name = "books"
