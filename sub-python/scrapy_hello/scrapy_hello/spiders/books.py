@@ -2,6 +2,7 @@ import sys
 
 import scrapy
 from scrapy.http import Response
+from scrapy.linkextractors import LinkExtractor
 
 from ..items import BookItem
 
@@ -38,10 +39,17 @@ class BooksSpider(scrapy.Spider):
             book['price'] = price
             yield book
             pass
-        # 下一页 # ul.paget li.next a::attr(href)
-        next_url = response.css('ul.pager li.next a::attr(href)').extract_first()
-        print(f'=== next url: {next_url}', file=sys.stderr)
-        if next_url and self.pages < 2:
-            # 构造下一个 requst 并返回
-            yield scrapy.Request(response.urljoin(next_url), callback=self.parse)
+        # 获取下一页连接 ul.paget li.next a::attr(href)
+        # 方式一、通过 css 选择器
+        # next_url = response.css('ul.pager li.next a::attr(href)').extract_first()
+        # print(f'=== next url: {next_url}', file=sys.stderr)
+        # if next_url and self.pages < 2:
+        #     # 构造下一个 requst 并返回
+        #     yield scrapy.Request(response.urljoin(next_url), callback=self.parse)
+        # 方式二、通过 LinkExtractor
+        linker = LinkExtractor(restrict_css='ul.pager li.next', tags=('a', 'area'), attrs=('href',))
+        links = linker.extract_links(response)
+        print(f'=== next url: {links}', file=sys.stderr)
+        if links and len(links) > 0 and self.pages < 2:
+            yield scrapy.Request(links[0].url, callback=self.parse)
         pass
