@@ -24,7 +24,10 @@ class PipelineManager(scrapy.pipelines.ItemPipelineManager):
 
     @classmethod
     def from_crawler(cls, crawler: Crawler):
-        cls._spider_name = crawler.spider.name
+        try:
+            cls._spider_name = crawler.spider.name
+        except AttributeError:
+            cls._spider_name = 'NotSet'
         logger.info(f'======== {cls} => spider: {cls._spider_name}')
         return cls.from_settings(crawler.settings, crawler)
 

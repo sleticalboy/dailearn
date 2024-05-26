@@ -29,12 +29,12 @@ class BooksSpider(scrapy.Spider):
         self.pages += 1
         # 解析数据
         for item in response.css('article.product_pod'):
-            book_url = item.css('div.image_container>a::attr(href)').extract_first()
+            book_url = item.css('div.image_container>a::attr(href)').get()
             yield scrapy.Request(response.urljoin(book_url), callback=self.parse_detail)
             pass
         # 获取下一页连接 ul.paget li.next a::attr(href)
         # 方式一、通过 css 选择器
-        # next_url = response.css('ul.pager li.next a::attr(href)').extract_first()
+        # next_url = response.css('ul.pager li.next a::attr(href)').get()
         # print(f'=== next url: {next_url}', file=sys.stderr)
         # if next_url and self.pages < 2:
         #     # 构造下一个 requst 并返回

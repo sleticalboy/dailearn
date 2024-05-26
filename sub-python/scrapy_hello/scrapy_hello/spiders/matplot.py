@@ -47,20 +47,20 @@ class MatplotSpider(scrapy.Spider):
         item = MatplotItem()
         item['url'] = response.url
 
-        title = response.css('section.sphx-glr-example-title>h1::text').extract_first()
+        title = response.css('section.sphx-glr-example-title>h1::text').get()
         self.log(f'parse_detail() sample title: {title}')
         item['title'] = title
 
         img_urls = item.setdefault('img_urls', [])
         file_urls = item.setdefault('file_urls', [])
         sample_codes = item.setdefault('sample_codes', [])
-        for img_url in response.css('img.sphx-glr-single-img::attr(src)').extract():
+        for img_url in response.css('img.sphx-glr-single-img::attr(src)').getall():
             img_url = response.urljoin(img_url)
             img_urls.append(img_url)
             file_urls.append(img_url)
             pass
 
-        for code_url in response.css('div.sphx-glr-download-python>p>a::attr(href)').extract():
+        for code_url in response.css('div.sphx-glr-download-python>p>a::attr(href)').getall():
             code_url = response.urljoin(code_url)
             sample_codes.append(code_url)
             file_urls.append(code_url)
