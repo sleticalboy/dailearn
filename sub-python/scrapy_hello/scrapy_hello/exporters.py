@@ -18,9 +18,9 @@ class TxtExporter(BaseItemExporter):
         pass
 
     def export_item(self, item):
-        data = '\t'.join(dict(self._get_serialized_fields(item)).values()) + '\n'
-        self._fp.write(data.encode())
-        print(f'export_item() {data}')
+        itemdict = dict(self._get_serialized_fields(item, default_value='', include_empty=True))
+        self._fp.write(('\t'.join(itemdict.values()) + '\n').encode())
+        print(f'export_item() {itemdict}')
         pass
 
     def finish_exporting(self):

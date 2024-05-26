@@ -3,9 +3,37 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 # useful for handling different item types with a single interface
+import logging
+
+import scrapy
 from itemadapter import ItemAdapter
-from scrapy.exceptions import DropItem
 from scrapy.crawler import Crawler
+from scrapy.exceptions import DropItem
+from scrapy.pipelines import files
+
+from .items import BookItem, MatplotItem
+
+logger = logging.getLogger(__name__)
+
+
+# 自定义 pipeline manager
+class PipelineManager(scrapy.pipelines.ItemPipelineManager):
+
+    # 记录当前爬虫的名字
+    _spider_name = ''
+
+    @classmethod
+    def from_crawler(cls, crawler: Crawler):
+        cls._spider_name = crawler.spider.name
+        logger.info(f'======== {cls} => spider: {cls._spider_name}')
+        return cls.from_settings(crawler.settings, crawler)
+
+    @classmethod
+    def _get_mwlist_from_settings(cls, settings):
+        from scrapy.utils.conf import build_component_list
+        # 根据爬虫名字获取 ITEM_PIPELINES 配置
+        compdict = settings.getwithbase("ITEM_PIPELINES_ME").get(cls._spider_name, {})
+        return build_component_list(compdict=compdict)
 
 
 # 自定义 pipeline
@@ -13,7 +41,6 @@ from scrapy.crawler import Crawler
 # 2、数据清洗（去重、去损、去过期）
 # 3、统计
 class BookPricePipeline:
-
     _rate = 8.539
     _mapper = {
         "One": 1,
@@ -52,24 +79,60 @@ class BookPricePipeline:
         return cls()
         pass
 
-    def open_spider(self, spider):
+    def open_spider(self, spider: scrapy.Spider):
         # 初始化工作：打开数据库、文件等
         pass
 
-    def process_item(self, item, spider):
+    def process_item(self, item, spider: scrapy.Spider):
         # 如果返回 item 则正常处理，如果抛出 DropItem 异常则丢弃该条数据
-        # adapter = ItemAdapter(item)
-        rating = item.get('review_rating')
+        if not isinstance(item, BookItem):
+            raise DropItem(f"except {BookItem}, got {item.__class__}")
+        adapter = ItemAdapter(item)
+        rating = adapter.get('review_rating')
         if rating:
             item['review_rating'] = self._mapper[rating]
-        if item.get('price'):
+        if adapter.get('price'):
             price = float(item['price'][1:]) * self._rate
             item['price'] = f'￥{price:.2f}'
-            print(f'process_item() real price: {price:.2f}')
+            # print(f'process_item() real price: {price:.2f}')
             return item
         else:
-            raise DropItem(f'Missing price in {item}')
+            raise DropItem(f"Missing 'price' in {type(item)}")
 
-    def close_spider(self, spider):
+    def close_spider(self, spider: scrapy.Spider):
         # 清理工作：关闭数据库、文件等
         pass
+
+
+# matplot 下载图片和代码
+class FilesPipeline(files.FilesPipeline):
+
+    @classmethod
+    def _make_path(cls, url):
+        logger.debug(f'_make_path() {url}')
+        type_ = 'codes' if url.endswith('.py') else 'images'
+        return f'matplot/{type_}/' + url.split('/')[-1]
+
+    def get_media_requests(self, item, info):
+        from scrapy.http.request import NO_CALLBACK
+        import os
+
+        _requests = []
+        # 跳过已下载的文件
+        for url in ItemAdapter(item).get(self.files_urls_field, []):
+            _path = self.store.basedir + '/' + self._make_path(url)
+            if os.path.exists(_path):
+                # logger.debug(f'=== skip {url} -> {_path}')
+                continue
+            # logger.debug(f'>>> hit request {url} -> {_path}')
+            _requests.append(scrapy.Request(url, callback=NO_CALLBACK))
+        # logger.debug(f'>=>= request size: {len(_requests)}')
+        return _requests
+
+    def process_item(self, item, spider: scrapy.Spider):
+        if not isinstance(item, MatplotItem):
+            raise DropItem(f"except {MatplotItem}, got {item.__class__}")
+        return super().process_item(item, spider)
+
+    def file_path(self, request, response=None, info=None, *, item=None):
+        return self._make_path(request.url)
