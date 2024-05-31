@@ -1,6 +1,7 @@
 import time
 
 from redis import Redis
+from redis.client import Pipeline
 
 
 def samples(client: Redis):
@@ -90,11 +91,25 @@ def expire(client: Redis):
     pass
 
 
+def pipline(pipe: Pipeline):
+    print(pipe.set('p-msg-1', 'msg-1'))
+    print(pipe.set('p-msg-2', 'msg-2'))
+    print(pipe.append('p-msg-2', ' --'))
+    print(pipe.sadd('p-s-fruits', 'apple', 'cherry', 'banana'))
+    print(pipe.incrby('p::counter', 20))
+    print(pipe.incrby('p::counter', 200))
+    print(pipe.get('p-msg-2'))
+    print(pipe.execute())
+    pass
+
+
 if __name__ == '__main__':
     # 以字符串形式打开数据库
     _client = Redis(db=1, password='foobared', decode_responses=True)
     # samples(_client)
     # hll(_client)
     # expire(_client)
+    _pp = _client.pipeline(transaction=False)
+    pipline(_pp)
     _client.close()
     pass
