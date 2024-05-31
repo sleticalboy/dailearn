@@ -1,11 +1,9 @@
 import time
 
-import redis
+from redis import Redis
 
 
-def run_main():
-    # 以字符串形式打开数据库
-    client = redis.Redis(db=1, password='foobared', decode_responses=True)
+def samples(client: Redis):
     # 列出所有的 key
     all_keys = [item for item in client.keys('*') if 'proj-inf:' not in item]
     print(all_keys)
@@ -62,6 +60,18 @@ def run_main():
     pass
 
 
+def hll(client: Redis):
+    print(client.delete('users::like'))
+    for i in range(1000):
+        client.pfadd('users::like', i)
+    print(client.pfcount('users::like'))
+    pass
+
+
 if __name__ == '__main__':
-    run_main()
+    # 以字符串形式打开数据库
+    _client = Redis(db=1, password='foobared', decode_responses=True)
+    # samples(_client)
+    hll(_client)
+    _client.close()
     pass
