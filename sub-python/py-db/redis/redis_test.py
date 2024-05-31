@@ -18,6 +18,11 @@ def samples(client: Redis):
     # 多个值存取
     print(client.mset({'name': 'binlee', 'age': 29, 'gender': 'male'}))
     print(client.mget(('name', 'age', 'gender')))
+    all_keys.remove('users::like')
+    try:
+        print(client.get('users::like'))
+    except UnicodeDecodeError:
+        pass
     print(dict(zip(all_keys, client.mget(all_keys))))
     # dict 操作
     print(client.hset('first_h', 'title', 'first hset',
@@ -57,6 +62,7 @@ def samples(client: Redis):
     print(client.zrangebyscore('zset::1', 0, 3, withscores=True))
     # print(client.save())
     # print(client.dump('hello-dump.rdb'))
+    print('dbsize: ', client.dbsize())
     pass
 
 
@@ -68,10 +74,27 @@ def hll(client: Redis):
     pass
 
 
+def expire(client: Redis):
+    # print(client.set('expire-1', 'in 5s'))
+    # print(client.expire('expire-1', 5))
+    # print(client.set('expire-1', 'in 2s', px=2000))
+    print(client.set('expire-1', 'in 2s', ex=2))
+    print(client.get('expire-1'))
+    while True:
+        ttl = client.ttl('expire-1')
+        if ttl < 0:
+            break
+        print(f'ttl: {ttl}s, wait 0.5s')
+        time.sleep(0.5)
+    print(client.get('expire-1'))
+    pass
+
+
 if __name__ == '__main__':
     # 以字符串形式打开数据库
     _client = Redis(db=1, password='foobared', decode_responses=True)
     # samples(_client)
-    hll(_client)
+    # hll(_client)
+    # expire(_client)
     _client.close()
     pass
