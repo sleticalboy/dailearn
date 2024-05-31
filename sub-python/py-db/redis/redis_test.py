@@ -57,6 +57,8 @@ def run_main():
     print(client.zcard('zset::1'))
     print(client.zrange('zset::1', 0, -1, withscores=True))
     print(client.zrangebyscore('zset::1', 0, 3, withscores=True))
+    # print(client.save())
+    # print(client.dump('hello-dump.rdb'))
     pass
 
 
