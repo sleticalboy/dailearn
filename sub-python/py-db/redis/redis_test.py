@@ -1,5 +1,7 @@
 import time
+import traceback
 
+from redis.exceptions import ResponseError
 from redis import Redis
 from redis.client import Pipeline
 
@@ -19,12 +21,13 @@ def samples(client: Redis):
     # 多个值存取
     print(client.mset({'name': 'binlee', 'age': 29, 'gender': 'male'}))
     print(client.mget(('name', 'age', 'gender')))
-    all_keys.remove('users::like')
     try:
         print(client.get('users::like'))
-    except UnicodeDecodeError:
+        all_keys.remove('users::like')
+        print(dict(zip(all_keys, client.mget(all_keys))))
+    except UnicodeDecodeError and ValueError as e:
+        traceback.print_exception(e)
         pass
-    print(dict(zip(all_keys, client.mget(all_keys))))
     # dict 操作
     print(client.hset('first_h', 'title', 'first hset',
                       mapping={'name': 'binlee', 'age': 29, 'gender': 'male'})
@@ -103,13 +106,26 @@ def pipline(pipe: Pipeline):
     pass
 
 
+def script(client: Redis):
+    print(client.eval("return 'hello lua world in redis'", 0))
+    print(client.eval("return 3.14", 0))
+    print(client.eval("return tostring(3.14)", 0))
+    print(client.eval("local var=tostring(3.14); return var", 0))
+    try:
+        print(client.eval("number=10; return number", 0))
+    except ResponseError as e:
+        traceback.print_exception(e)
+        pass
+    pass
+
+
 if __name__ == '__main__':
     # 以字符串形式打开数据库
     _client = Redis(db=1, password='foobared', decode_responses=True)
-    # samples(_client)
-    # hll(_client)
-    # expire(_client)
-    _pp = _client.pipeline(transaction=False)
-    pipline(_pp)
+    samples(_client)
+    hll(_client)
+    expire(_client)
+    pipline(_client.pipeline(transaction=False))
+    script(_client)
     _client.close()
     pass
