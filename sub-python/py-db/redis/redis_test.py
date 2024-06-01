@@ -1,9 +1,11 @@
+import logging
+import threading
 import time
 import traceback
 
 from redis.exceptions import ResponseError
 from redis import Redis
-from redis.client import Pipeline
+from redis.client import Pipeline, PubSub
 
 
 def samples(client: Redis):
@@ -119,13 +121,46 @@ def script(client: Redis):
     pass
 
 
+# 用于实现消息队列
+def stream():
+    pass
+
+
+# 发布与订阅
+def subscrib(client: Redis):
+    pubsub = client.pubsub()
+    pubsub.subscribe('algo.tts')
+    while True:
+        msg = pubsub.get_message(timeout=2)
+        if msg is None:
+            break
+        logging.warning(f'receive algo.tts -> {msg}')
+    print('exit....')
+    pass
+
+
+def publish(client: Redis, limit):
+    for i in range(limit):
+        time.sleep(0.2)
+        logging.warning(f"publish: {client.publish('algo.tts', f'text content {i + 1}')}")
+        time.sleep(0.3)
+
+
 if __name__ == '__main__':
     # 以字符串形式打开数据库
-    _client = Redis(db=1, password='foobared', decode_responses=True)
-    samples(_client)
-    hll(_client)
-    expire(_client)
-    pipline(_client.pipeline(transaction=False))
-    script(_client)
-    _client.close()
+    redis = Redis(db=1, password='foobared', decode_responses=True)
+    # samples(redis)
+    # hll(redis)
+    # expire(redis)
+    # pipline(redis.pipeline(transaction=False))
+    # script(redis)
+    p = threading.Thread(target=publish, args=(redis, 10))
+    p.start()
+
+    s = threading.Thread(target=subscrib, args=(redis,))
+    s.start()
+
+    s.join()
+    p.join()
+    redis.close()
     pass
