@@ -1,11 +1,9 @@
 from pymongo import MongoClient
+from pymongo.database import Database
 from bson import ObjectId
 
 
-def run_main():
-    client = MongoClient('localhost', 27017)
-    print(client.list_database_names())
-    db = client.get_database('test')
+def basic_samples(db: Database):
     print(db.list_collection_names())
     # 单个插入
     print(db.book.insert_one({'title': 0, 'seq': -1}))
@@ -45,6 +43,32 @@ def run_main():
     pass
 
 
+def capped_(db: Database):
+    table = db.get_collection('logs')
+    if table is not None:
+        table.drop()
+    # 固定大小的集合，数据达到限定后，后续插入的数据会覆盖之前的
+    table = db.create_collection("logs", capped=True, size=4096*2)
+    print(table)
+    rows = []
+    for i in range(2000):
+        rows.append({'tag': f'row-{i + 1}', 'id': id(i)})
+        pass
+    table.insert_many(rows)
+    print(table.create_index({'tag': 1, 'id': 1}))
+    for item in table.find({}, {'_id': 0}):
+        print(item)
+    # 查看集合大小
+    print(db.command('dbstats'))
+    print(db.command('collstats', 'logs'))
+    pass
+
+
 if __name__ == '__main__':
-    run_main()
+    _client = MongoClient('localhost', 27017)
+    print(_client.list_database_names())
+    _db = _client.get_database('test')
+    # basic_samples(_client)
+    capped_(_db)
+    _client.close()
     pass
