@@ -49,18 +49,18 @@ class BooksSpider(scrapy.Spider):
 
     @classmethod
     def parse_detail(cls, response: Response):
-        img_url = response.css('#product_gallery>div>div>div>img::attr(src)').extract_first()
+        img_url = response.css('#product_gallery>div>div>div>img::attr(src)').get()
         img_url = response.urljoin(img_url)
 
         main = response.css('div.product_main')
-        name = main.xpath('./h1/text()').extract_first()
-        price = main.css('p.price_color::text').extract_first()
+        name = main.xpath('./h1/text()').get()
+        price = main.css('p.price_color::text').get()
         review_rating = main.css('p.star-rating::attr(class)').re_first('star-rating ([A-Za-z]+)')
 
         table = response.css('table.table.table-striped')
-        upc = table.xpath('.//tr[1]/td/text()').extract_first()
+        upc = table.xpath('.//tr[1]/td/text()').get()
         stock = table.xpath('.//tr[last()-1]/td/text()').re_first(r'\((\d+) available\)')
-        review_num = table.xpath('.//tr[last()]/td/text()').extract_first()
+        review_num = table.xpath('.//tr[last()]/td/text()').get()
 
         # 方式一、使用 dict 存储数据
         # yield {'name': name, 'price': price}
