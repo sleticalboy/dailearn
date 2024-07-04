@@ -29,3 +29,4 @@ include ':lib_sqlite_orm'
 
 // 手机端文件服务器
 // include ':lib_file_server'
+include ':smalitest'

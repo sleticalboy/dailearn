@@ -4,10 +4,10 @@ buildscript {
   ext {
     kotlin_version = '1.8.21'
     compile_version = 33
-    build_version = '33.0.0'
+    build_version = '33.0.3'
     min_version = 21
     target_version = 33
-    gradle_version = '4.2.1'
+    gradle_version = '7.1.0'
     appcompat_version = '1.6.1'
     ktx_version = '1.10.1'
     constraint_version = '2.1.4'
@@ -71,6 +71,7 @@ allprojects {
     resolutionStrategy.force 'org.jetbrains:annotations:23.0.0'
     // resolutionStrategy.force 'junit:junit:4.12'
     // resolutionStrategy.force 'com.squareup.okio:okio:2.2.2'
+    resolutionStrategy.force 'com.google.code.gson:gson:2.10.1'
   }
 }
 
@@ -96,14 +97,17 @@ task printBuildDir(description: 'print build files', group: 'custom') {
 }
 
 allprojects {
-  tasks.findByName('clean') {
-    doLast {
-      try {
-         delete(file('build'))
-         delete(file('.gradle'))
-         delete(file('.cxx'))
-      } catch (Throwable ignored) {
+  try {
+    tasks.findByName('clean') {
+      doLast {
+        try {
+          delete(file('build'))
+          delete(file('.gradle'))
+          delete(file('.cxx'))
+        } catch (Throwable ignored) {
+        }
       }
     }
+  } catch (Throwable ignored) {
   }
 }

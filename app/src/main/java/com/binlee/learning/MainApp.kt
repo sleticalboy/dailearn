@@ -4,14 +4,16 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.AssetManager
+import android.content.res.Resources
 import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.binlee.learning.components.receiver.GlobalReceiver
 import com.binlee.learning.util.NotificationHelper
-import curtains.Curtains
-import curtains.OnRootViewsChangedListener
+import java.security.SecureRandom
+
 
 /**
  * Created on 18-3-5.
@@ -25,15 +27,16 @@ class MainApp : Application() {
     super.onCreate()
     // DlManager.get().init(this)
     mApp = this
-<<<<<<< HEAD
     adaptAndroidO()
-=======
     registerNotificationChannels()
 
     // Curtains.onRootViewsChangedListeners += OnRootViewsChangedListener { view, added ->
     //   Log.d(TAG, "root $view ${if (added) "added" else "removed"}")
     //   if (added) dumpChildren(view)
     // }
+
+    val androidId = java.lang.Long.toHexString(SecureRandom().nextLong())
+    Log.d(TAG, "onCreate() android id: $androidId")
   }
 
   private fun dumpChildren(root: View) {
@@ -43,25 +46,21 @@ class MainApp : Application() {
         dumpChildren(root.getChildAt(i))
       }
     }
->>>>>>> 736ebad9 (feat: [android] PIP support)
   }
 
-<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/MainApp.kt
-<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/MainApp.kt
-  private fun adaptAndroidO() {
-=======
+  private fun adaptAndroidO() {}
+
   override fun getResources(): Resources {
-    return DlManager.resources()
+    // return DlManager.get().resources
+    return super.getResources()
   }
 
   override fun getAssets(): AssetManager {
-    return DlManager.resources().assets
+    // return DlManager.resources().assets
+    return super.getAssets()
   }
 
-=======
->>>>>>> 90f26f9c (reat: virtual runtime via didi's VirtualApk):MainApp/src/main/java/com/binlee/learning/MainApp.kt
   private fun registerNotificationChannels() {
->>>>>>> 661d1ff1 (feat: hook ActivityThread#mInstrumentation to start a plugin activity):MainApp/src/main/java/com/binlee/learning/MainApp.kt
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
     Log.d("MainApp", "adapt android O")
     registerReceivers()

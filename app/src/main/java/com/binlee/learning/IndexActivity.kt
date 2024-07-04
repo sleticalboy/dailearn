@@ -1,7 +1,6 @@
 package com.binlee.learning
 
 import android.Manifest
-import android.app.ActivityManager
 import android.app.PictureInPictureParams
 import android.content.Intent
 import android.content.res.AssetManager
@@ -24,7 +23,6 @@ import com.binlee.learning.databinding.ActivityListItemBinding
 import com.binlee.learning.http.IDemo
 import com.binlee.learning.http.RetrofitClient
 import com.binlee.learning.http.bean.Apis
-import com.binlee.learning.others.KeyboardHeightProvider
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -33,19 +31,6 @@ import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/IndexActivity.kt
-import java.io.File
-<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/IndexActivity.kt
-import java.io.FileOutputStream
-<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/IndexActivity.kt
-import java.lang.NullPointerException
-import java.lang.RuntimeException
-=======
->>>>>>> b9c4ea6a (feat: mark resources conflicts):MainApp/src/main/java/com/binlee/learning/IndexActivity.kt
-=======
->>>>>>> 90f26f9c (reat: virtual runtime via didi's VirtualApk):MainApp/src/main/java/com/binlee/learning/IndexActivity.kt
-=======
->>>>>>> a0acef2d (feat: try to start a plugin service):MainApp/src/main/java/com/binlee/learning/IndexActivity.kt
 import kotlin.concurrent.thread
 
 class IndexActivity : BaseActivity() {
@@ -78,19 +63,15 @@ class IndexActivity : BaseActivity() {
   override fun initView() {
     mBind!!.recyclerView.adapter = DataAdapter(dataSet)
     val start = System.currentTimeMillis()
-<<<<<<< HEAD:MainApp/src/main/java/com/sleticalboy/learning/IndexActivity.kt
-    DataEngine.get().indexModel().getModuleSource().observe(this, {
-=======
-    DataEngine.get().indexModel().getModules().observe(this) {
->>>>>>> 0f7b52a5 (feat: Show focus icon when touch camera preview screen):MainApp/src/main/java/com/binlee/learning/IndexActivity.kt
+    DataEngine.get().indexModel().getModuleSource().observe(this) {
       when (it) {
         is Result.Loading -> {
           Log.d(TAG, "initView() loading data: $it")
         }
+
         is Result.Error -> {
           Log.d(TAG, "initView() load data error: $it")
-        }
-        else -> {
+        } else -> {
           // Log.d(TAG, "initView() load data success: $it")
           dataSet.clear()
           dataSet.addAll((it as Result.Success).getData())
@@ -99,11 +80,11 @@ class IndexActivity : BaseActivity() {
         }
       }
     }
-    KeyboardHeightProvider.inject(this, object : KeyboardHeightProvider.HeightObserver {
+    /*KeyboardHeightProvider.inject(this, object : KeyboardHeightProvider.HeightObserver {
       override fun onHeightChanged(height: Int, orientation: Int) {
         // 检测到软键盘弹出
       }
-    })
+    })*/
   }
 
   override fun initData() {

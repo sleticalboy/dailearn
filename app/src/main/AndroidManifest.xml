@@ -4,6 +4,10 @@
   package="com.binlee.learning"
   xmlns:tools="http://schemas.android.com/tools">
 
+  <uses-feature
+    android:name="android.hardware.camera"
+    android:required="false" />
+
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
   <uses-permission android:name="android.permission.INTERNET" />
@@ -43,160 +47,150 @@
   <!--permission for camera-->
   <uses-permission android:name="android.permission.CAMERA" />
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <application
-        android:name="com.sleticalboy.learning.MainApp"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true">
-        <activity
-            android:name="com.sleticalboy.learning.IndexActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
+<!--    <application-->
+<!--        android:name="com.binlee.learning.MainApp"-->
+<!--        android:allowBackup="true"-->
+<!--        android:icon="@mipmap/ic_launcher"-->
+<!--        android:label="@string/app_name"-->
+<!--        android:roundIcon="@mipmap/ic_launcher_round"-->
+<!--        android:supportsRtl="true"-->
+<!--        android:theme="@style/Theme.AppCompat.Light.NoActionBar"-->
+<!--        android:usesCleartextTraffic="true">-->
+<!--        <activity-->
+<!--            android:name="com.binlee.learning.IndexActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name="com.sleticalboy.learning.rv.WheelRVActivity" />
-        <activity android:name="com.sleticalboy.learning.rv.DecorationActivity" />
-        <activity android:name="com.sleticalboy.learning.rv.PagerActivity" />
-        <activity android:name="com.sleticalboy.learning.rv.ClassifyActivity" />
-        <activity android:name="com.sleticalboy.learning.camera.v1.LiveCameraActivity" />
-        <!--custom view -->
-        <activity android:name="com.sleticalboy.learning.csv.PathActivity" />
-        <activity android:name="com.sleticalboy.learning.csv.AlphaActivity" />
-        <activity android:name="com.sleticalboy.learning.csv.HeaderActivity" />
-        <activity android:name="com.sleticalboy.learning.csv.CustomViewActivity" />
-        <activity android:name="com.sleticalboy.learning.csv.ScrollerActivity" />
-        <activity android:name="com.sleticalboy.learning.csv.GridViewActivity" />
-        <!--others-->
-        <activity android:name="com.sleticalboy.learning.others.AlarmActivity" />
-        <activity android:name="com.sleticalboy.learning.others.ImageConvertUI" />
-        <activity
-            android:name="com.sleticalboy.learning.csv.AutoSwitchUI"
-            android:label="@string/title_activity_auto_switch_view" />
-        <!-- 转场动画 -->
-        <activity android:name="com.sleticalboy.learning.anims.TransitionUI" />
-        <!--lottie json anim-->
-        <activity android:name="com.sleticalboy.learning.anims.JsonAnimUI" />
-        <!-- 设备管理 -->
-        <activity android:name="com.sleticalboy.learning.devices.DeviceAdminUI" />
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+<!--        <activity android:name="com.binlee.learning.rv.WheelRVActivity" />-->
+<!--        <activity android:name="com.binlee.learning.rv.DecorationActivity" />-->
+<!--        <activity android:name="com.binlee.learning.rv.PagerActivity" />-->
+<!--        <activity android:name="com.binlee.learning.rv.ClassifyActivity" />-->
+<!--        &lt;!&ndash;custom view &ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.csv.PathActivity" />-->
+<!--        <activity android:name="com.binlee.learning.csv.AlphaActivity" />-->
+<!--        <activity android:name="com.binlee.learning.csv.HeaderActivity" />-->
+<!--        <activity android:name="com.binlee.learning.csv.CustomViewActivity" />-->
+<!--        <activity android:name="com.binlee.learning.csv.ScrollerActivity" />-->
+<!--        <activity android:name="com.binlee.learning.csv.GridViewActivity" />-->
+<!--        &lt;!&ndash;others&ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.others.AlarmActivity" />-->
+<!--        <activity android:name="com.binlee.learning.others.ImageConvertUI" />-->
+<!--        <activity-->
+<!--            android:name="com.binlee.learning.csv.AutoSwitchUI"-->
+<!--            android:label="@string/title_activity_auto_switch_view" />-->
+<!--        &lt;!&ndash; 转场动画 &ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.anims.TransitionUI" />-->
+<!--        &lt;!&ndash;lottie json anim&ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.anims.JsonAnimUI" />-->
+<!--        &lt;!&ndash; 设备管理 &ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.devices.DeviceAdminUI" />-->
 
-        <activity android:name="com.sleticalboy.learning.components.ServicePractise" />
-        <!-- authenticator for account -->
-        <activity
-            android:name="com.sleticalboy.learning.accounts.auth.AuthenticatorActivity"
-            android:excludeFromRecents="true">
-            <!--
-                No intent-filter here! This activity is only ever launched by
-                someone who explicitly knows the class name
-            -->
-        </activity>
-        <!--activity for debug-->
-        <activity android:name="com.sleticalboy.learning.debug.DebugUI" />
-        <!--activity for bluetooth-->
-        <activity android:name="com.sleticalboy.learning.bt.BluetoothUI" />
-        <activity android:name="com.sleticalboy.learning.others.NotificationsUI" />
-        <activity android:name=".components.ProviderPractise" />
-        <activity android:name=".dialogs.DialogsUI" />
-        <activity android:name=".rv.NestedRvActivity" />
+<!--        <activity android:name="com.binlee.learning.components.ServicePractise" />-->
+<!--        &lt;!&ndash; authenticator for account &ndash;&gt;-->
+<!--        <activity-->
+<!--            android:name="com.binlee.learning.accounts.auth.AuthenticatorActivity"-->
+<!--            android:excludeFromRecents="true">-->
+<!--            &lt;!&ndash;-->
+<!--                No intent-filter here! This activity is only ever launched by-->
+<!--                someone who explicitly knows the class name-->
+<!--            &ndash;&gt;-->
+<!--        </activity>-->
+<!--        &lt;!&ndash;activity for debug&ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.dev.DebugUI" />-->
+<!--        &lt;!&ndash;activity for bluetooth&ndash;&gt;-->
+<!--        <activity android:name="com.binlee.learning.bt.BluetoothUI" />-->
+<!--        <activity android:name="com.binlee.learning.others.NotificationsUI" />-->
+<!--        <activity android:name=".components.ProviderPractise" />-->
+<!--        <activity android:name=".dialogs.DialogsUI" />-->
+<!--        <activity android:name=".rv.NestedRvActivity" />-->
 
-        <provider
-            android:name="com.sleticalboy.learning.accounts.ContactsProvider"
-            android:authorities="@string/account_authority"
-            android:label="@string/contacts_provider_label" />
-        <provider
-            android:name="com.sleticalboy.learning.accounts.RoutinesProvider"
-            android:authorities="@string/routine_authority"
-            android:label="@string/routines_provider_label" />
-        <provider
-<<<<<<< HEAD
-            android:name="com.sleticalboy.learning.components.provider.StoreProvider"
-            android:authorities="com.sleticalboy.learning.store"
-=======
-            android:name="com.binlee.learning.components.provider.StoreProvider"
-            android:authorities="com.binlee.learning.store"
->>>>>>> f8b5c151 (refactor: MainApp module, rename sleticalboy to binlee)
-            android:enabled="true"
-            android:exported="false" />
+<!--        <provider-->
+<!--            android:name="com.binlee.learning.accounts.ContactsProvider"-->
+<!--            android:authorities="@string/account_authority"-->
+<!--            android:label="@string/contacts_provider_label" />-->
+<!--        <provider-->
+<!--            android:name="com.binlee.learning.accounts.RoutinesProvider"-->
+<!--            android:authorities="@string/routine_authority"-->
+<!--            android:label="@string/routines_provider_label" />-->
+<!--        <provider-->
+<!--            android:name="com.binlee.learning.components.provider.StoreProvider"-->
+<!--            android:authorities="com.binlee.learning.store"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false" />-->
 
-        <receiver
-            android:name="com.sleticalboy.learning.devices.DevicesReceiver"
-            android:exported="true"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/devices_admin" />
-        </receiver>
-        <receiver
-            android:name="com.sleticalboy.learning.components.receiver.GlobalReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
+<!--        <receiver-->
+<!--            android:name="com.binlee.learning.devices.DevicesReceiver"-->
+<!--            android:exported="true"-->
+<!--            android:permission="android.permission.BIND_DEVICE_ADMIN">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />-->
+<!--                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />-->
+<!--                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data-->
+<!--                android:name="android.app.device_admin"-->
+<!--                android:resource="@xml/devices_admin" />-->
+<!--        </receiver>-->
+<!--        <receiver-->
+<!--            android:name="com.binlee.learning.components.receiver.GlobalReceiver"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.SCREEN_ON" />-->
+<!--                <action android:name="android.intent.action.USER_PRESENT" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
-        <service
-            android:name="com.sleticalboy.learning.accounts.auth.AuthenticationService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-        <service
-            android:name="com.sleticalboy.learning.accounts.sync.ContactsSyncService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_adapter_accounts" />
-        </service>
-        <service
-            android:name="com.sleticalboy.learning.accounts.sync.RoutineSyncService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_adapter_routines" />
-        </service>
-        <!-- service practice -->
-        <service android:name="com.sleticalboy.learning.components.service.LocalService" />
-        <service android:name="com.sleticalboy.learning.bt.ble.BleService" />
+<!--        <service-->
+<!--            android:name="com.binlee.learning.accounts.auth.AuthenticationService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.accounts.AccountAuthenticator" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data-->
+<!--                android:name="android.accounts.AccountAuthenticator"-->
+<!--                android:resource="@xml/authenticator" />-->
+<!--        </service>-->
+<!--        <service-->
+<!--            android:name="com.binlee.learning.accounts.sync.ContactsSyncService"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.content.SyncAdapter" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data-->
+<!--                android:name="android.content.SyncAdapter"-->
+<!--                android:resource="@xml/sync_adapter_accounts" />-->
+<!--        </service>-->
+<!--        <service-->
+<!--            android:name="com.binlee.learning.accounts.sync.RoutineSyncService"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.content.SyncAdapter" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data-->
+<!--                android:name="android.content.SyncAdapter"-->
+<!--                android:resource="@xml/sync_adapter_routines" />-->
+<!--        </service>-->
+<!--        &lt;!&ndash; service practice &ndash;&gt;-->
+<!--        <service android:name="com.binlee.learning.components.service.LocalService" />-->
+<!--        <service android:name="com.binlee.learning.bt.ble.BleService" />-->
 
-        <service
-            android:name=".components.service.UpgradeService"
-            android:exported="true"
-            android:permission="com.binlee.permissions.REMOTE_UPGRADE" />
-    </application>
-=======
-=======
-  <uses-feature android:name="android.hardware.camera" />
-  <uses-feature
-    android:name="android.hardware.camera.autofocus"
-    android:required="false" />
+<!--        <service-->
+<!--            android:name=".components.service.UpgradeService"-->
+<!--            android:exported="true"-->
+<!--            android:permission="com.binlee.permissions.REMOTE_UPGRADE" />-->
+<!--    </application>-->
+<!--  <uses-feature android:name="android.hardware.camera" />-->
+<!--  <uses-feature-->
+<!--    android:name="android.hardware.camera.autofocus"-->
+<!--    android:required="false" />-->
 
->>>>>>> 908196f5 (feat: save camera picture size & preview size to shared preference file)
+<!--&gt;>>>>>> 908196f5 (feat: save camera picture size & preview size to shared preference file)-->
   <application
     android:name="com.binlee.learning.MainApp"
     android:allowBackup="true"
@@ -367,6 +361,5 @@
       android:exported="true"
       android:permission="com.binlee.permissions.REMOTE_UPGRADE" />
   </application>
->>>>>>> a922383b (fix: fix build error package 'xxx' not found)
 
 </manifest>
