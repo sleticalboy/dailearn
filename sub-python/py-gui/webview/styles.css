@@ -1,0 +1,160 @@
+/* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html body {
+    background: transparent;
+    overflow: hidden;
+}
+
+/* Set the background color and font family */
+.container {
+    left: 143px;
+    top: 110px;
+    width: 1080px;
+    height: 720px;
+    line-height: 20px;
+    border-radius: 20px 20px 20px 20px;
+    background: linear-gradient(224.06deg, rgba(25, 30, 69, 1) 8.91%, rgba(25, 30, 58, 0.72) 133.43%, rgba(25, 30, 49, 0.5) 136.7%, rgba(25, 30, 30, 0) 166.2%);
+    color: rgba(16, 16, 16, 1);
+    font-size: 14px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    border: 1px solid rgba(187, 187, 187, 1);
+    scrollbar-gutter: unset;
+}
+
+/* Header styles */
+.header {
+    margin-left: 138px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    color: white;
+}
+
+.divider {
+    margin-left: 113px;
+    top: 197px;
+    width: 854px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(231, 231, 231, 1);
+}
+
+.header nav ul {
+    list-style-type: none;
+    display: flex;
+}
+
+.header nav li {
+    margin-right: 1rem;
+}
+
+.header nav a {
+    text-decoration: none;
+    color: white;
+}
+
+/* Common styles for sections */
+.section {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+/* Individual component styles */
+
+/* Footer styles */
+.footer {
+    background-color: #3c3c3c;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Home Section styles */
+.running-status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.local-models {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 创建一个4列的网格，每列占据可用空间的一等份 */
+    grid-gap: 10px; /* 设置网格项之间的间隙 */
+}
+
+.local-models img {
+    width: 100%; /* 使图片宽度充满其网格单元格 */
+    height: auto; /* 保持图片的原始宽高比 */
+    display: block; /* 移除图片下方的默认间隙 */
+}
+
+.model-details img {
+    width: 100%;
+    height: auto;
+}
+
+/* Paid Models Section styles */
+.male-voice-models,
+.female-voice-models,
+.entertainment,
+.audio-settings,
+.sound-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.male-voice-models ul,
+.female-voice-models ul {
+    list-style-type: none;
+    margin-top: 1rem;
+}
+
+.male-voice-models li,
+.female-voice-models li {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    background-color: #eaeaea;
+    border-radius: 0.25rem;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+/* More Settings Section styles */
+.general-settings form,
+.performance-settings form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.general-settings label,
+.performance-settings label {
+    margin-bottom: 0.5rem;
+}
+
+.performance-settings input[type="range"] {
+    width: 100%;
+}
+
+.performance-settings input[type="checkbox"] {
+    margin-left: 1rem;
+}

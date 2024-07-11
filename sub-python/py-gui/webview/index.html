@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" disabled="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<dialog open style="display: none">
+    <p>Greetings, one and all!</p>
+    <form method="dialog">
+        <button>OK</button>
+    </form>
+</dialog>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <nav>
+            <ul>
+                <li><a href="" onclick="homePage()">首页</a></li>
+                <li><a href="" onclick="paiedModels()">付费模型</a></li>
+                <li><a href="" onclick="moreSettings()">更多设置</a></li>
+                <li><a href="" onclick="importModels()">导入模型</a></li>
+                <li><a href="" onclick="exitApp()">×</a></li>
+                <li><a href="" onclick="minimumWinwow()">-</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Home Section -->
+    <section id="home">
+        <div class="section">
+            <!-- Running Status -->
+            <div class="running-status">
+                <span style="font-size: medium">运行情况</span>
+                <span>模型名：运行中</span>
+                <span></span>
+                <span>日期：2024/6/21 星期四 23:00</span>
+            </div>
+
+            <!-- Local Models -->
+            <div class="local-models">
+                <h2>本地模型</h2>
+                <img src="150.png" width="16" height="16">模型1</img>
+                <img src="150.png" width="16" height="16">模型2</img>
+                <img src="150.png" width="16" height="16">模型3</img>
+                <img src="150.png" width="16" height="16">模型4</img>
+                <img src="150.png" width="16" height="16">模型5</img>
+                <img src="150.png" width="16" height="16">模型6</img>
+                <img src="150.png" width="16" height="16">模型7</img>
+                <img src="150.png" width="16" height="16">模型8</img>
+            </div>
+
+            <!-- Model Details -->
+            <div class="model-details">
+                <h2>模型详情</h2>
+                <div>
+                    <!--<img src="150.png" alt="Model Image" width="32" height="32">-->
+                </div>
+                <h2>音调设置</h2>
+                <label for="performance">性能:</label>
+                <select id="performance">
+                    <option value="low">低</option>
+                    <option value="medium">中</option>
+                    <option value="high">高</option>
+                </select>
+                <label for="exclusiveWASAPI">独占WASAPI:</label>
+                <input type="checkbox" id="exclusiveWASAPI">
+                <label for="deviceType">设备类型:</label>
+                <select id="deviceType">
+                    <!-- Add device options here -->
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paid Models Section -->
+    <section id="paid-models" hidden="hidden">
+        <div class="section">
+            <!-- Male Voice Models -->
+            <div class="male-voice-models">
+                <h2>男声模型</h2>
+                <ul>
+                    <li>模型1</li>
+                    <li>模型2</li>
+                    <li>模型3</li>
+                    <li>模型4</li>
+                    <li>模型5</li>
+                    <li>模型6</li>
+                </ul>
+            </div>
+
+            <!-- Female Voice Models -->
+            <div class="female-voice-models">
+                <h2>女声模型</h2>
+                <ul>
+                    <li>模型1</li>
+                    <li>模型2</li>
+                    <li>模型3</li>
+                    <li>模型4</li>
+                    <li>模型5</li>
+                    <li>模型6</li>
+                </ul>
+            </div>
+
+            <!-- Entertainment -->
+            <div class="entertainment">
+                <h2>娱乐</h2>
+                <!-- Add entertainment components here -->
+            </div>
+
+            <!-- Audio Settings -->
+            <div class="audio-settings">
+                <h2>音频设置</h2>
+                <form>
+                    <label for="input-device">输入设备：</label>
+                    <input type="text" id="input-device" placeholder="请输入内容">
+                    <br>
+                    <label for="output-device">输出设备：</label>
+                    <input type="text" id="output-device" placeholder="请输入内容">
+                </form>
+            </div>
+
+            <!-- Sound Card -->
+            <div class="sound-card">
+                <h2>声鉴卡</h2>
+                <button>播放</button>
+                <div class="payment-methods">
+                    <span>支付码</span>
+                    <span>微信/支付宝</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- More Settings Section -->
+    <section id="more-settings" hidden="hidden">
+        <div class="section">
+            <!-- General Settings -->
+            <div class="general-settings">
+                <h2>常规设置</h2>
+                <form>
+                    <label for="response-decay-value">响应阈值</label>
+                    <input type="range" id="response-decay-value" min="0" max="100" step="1">
+                    <br>
+                    <label for="pitch-setting">音调设置</label>
+                    <input type="range" id="pitch-setting" min="-12" max="12" step="1">
+                    <br>
+                    <label for="voice-coarseness">声音粗细</label>
+                    <input type="range" id="voice-coarseness" min="0" max="100" step="1">
+                    <br>
+                    <label for="inspection-feature-ratio">检素特征占比</label>
+                    <input type="range" id="inspection-feature-ratio" min="0" max="100" step="1">
+                    <br>
+                    <label for="resonance-factors">响度因子</label>
+                    <input type="range" id="resonance-factors" min="0" max="100" step="1">
+                    <br>
+                    <label for="algorithm">音高算法</label>
+                    <select id="algorithm">
+                        <option value="pm">pm</option>
+                        <option value="harvest">harvest</option>
+                        <option value="crepe">crepe</option>
+                        <option value="fcpe">fcpe</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Performance Settings -->
+            <div class="performance-settings">
+                <h2>性能设置</h2>
+                <form>
+                    <label for="sampling-length">采样长度</label>
+                    <input type="range" id="sampling-length" min="0" max="100" step="1">
+                    <br>
+                    <label for="harvest-processes">harvest进程数</label>
+                    <input type="range" id="harvest-processes" min="0" max="100" step="1">
+                    <br>
+                    <label for="fade-in-out-length">淡入淡出长度</label>
+                    <input type="range" id="fade-in-out-length" min="0" max="100" step="1">
+                    <br>
+                    <label for="extra推理时长">额外推理时长</label>
+                    <input type="range" id="extra推理时长" min="0" max="100" step="1">
+                    <br>
+                    <label for="input-noise-reduction">输入降噪</label>
+                    <input type="checkbox" id="input-noise-reduction">
+                    <br>
+                    <label for="output-noise-reduction">输出降噪</label>
+                    <input type="checkbox" id="output-noise-reduction">
+                    <br>
+                    <label for="enable-similar-sound-matrix">启用相位声码器</label>
+                    <input type="checkbox" id="enable-similar-sound-matrix">
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+<script src="scripts.js"></script>
+</body>
+</html>
